@@ -24,3 +24,9 @@ class MenuItem {
   final double price;
   final String description;
 }
+
+class OrderItem {
+  OrderItem(this.item, this.quantity);
+  final MenuItem item;
+  int quantity;
+}

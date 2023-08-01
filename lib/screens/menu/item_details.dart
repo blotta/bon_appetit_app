@@ -1,13 +1,15 @@
 import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/providers/order.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ItemDetails extends StatelessWidget {
+class ItemDetails extends ConsumerWidget {
   const ItemDetails({super.key, required this.item});
 
   final MenuItem item;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Colors.white,
@@ -43,7 +45,16 @@ class ItemDetails extends StatelessWidget {
               Container(
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
-                  onPressed: () {},
+                  onPressed: () {
+                    ref.read(orderItemsProvider.notifier).addItem(item);
+
+                    ScaffoldMessenger.of(context).clearSnackBars();
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                          content:
+                              Text('Item adicionado à lista de pedidos')),
+                    );
+                  },
                   child: const Text(
                     'Adicionar',
                     style: TextStyle(

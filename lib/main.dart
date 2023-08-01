@@ -1,19 +1,19 @@
 import 'package:bon_appetit_app/screens/tabs.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:google_fonts/google_fonts.dart';
 
 final theme = ThemeData(
   useMaterial3: true,
   colorScheme: ColorScheme.fromSeed(
-    seedColor: const Color.fromARGB(255, 255, 107, 26),
-    brightness: Brightness.light,
-    surface: const Color.fromARGB(255, 255, 107, 26)
-  ),
+      seedColor: const Color.fromARGB(255, 255, 107, 26),
+      brightness: Brightness.light,
+      surface: const Color.fromARGB(255, 255, 107, 26)),
   textTheme: GoogleFonts.latoTextTheme(),
 );
 
 void main() {
-  runApp(const MyApp());
+  runApp(const ProviderScope(child: MyApp()));
 }
 
 class MyApp extends StatelessWidget {
