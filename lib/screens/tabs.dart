@@ -1,3 +1,4 @@
+import 'package:bon_appetit_app/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:bon_appetit_app/screens/initial.dart';
 import 'package:bon_appetit_app/screens/menu.dart';
@@ -28,12 +29,17 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
       activePage = const MenuScreen();
     }
 
+    if (_selectedPageIndex == 2) {
+      activePage = const ProfileScreen();
+    }
+
     return Scaffold(
       // appBar: AppBar(title: const Text('Bon Appetit')),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,
         currentIndex: _selectedPageIndex,
+        selectedItemColor: Theme.of(context).colorScheme.surface,
         items: [
           const BottomNavigationBarItem(icon: Icon(Icons.home), label: 'Home'),
           BottomNavigationBarItem(
