@@ -1,4 +1,5 @@
 import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/screens/profile/items.dart';
 import 'package:flutter/material.dart';
 
 class SectionEditScreen extends StatefulWidget {
@@ -31,6 +32,11 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
 
       Navigator.of(context).pop();
     }
+  }
+
+  void navigateToItemsScreenAndGetItem() async {
+    var newItem = await Navigator.of(context)
+        .push<MenuItem>(MaterialPageRoute(builder: (ctx) => const ItemsScreen()));
   }
 
   @override
@@ -66,7 +72,7 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           IconButton(
-                            onPressed: () {},
+                            onPressed: navigateToItemsScreenAndGetItem,
                             icon: const Icon(Icons.add_box, size: 30),
                             color: Theme.of(context).colorScheme.surface,
                           ),

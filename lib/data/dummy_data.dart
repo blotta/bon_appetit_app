@@ -53,6 +53,23 @@ var dataItems = const [
       "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png?t=2023-07-31T05%3A21%3A53.946Z",
       16.0,
       "Biscoitos champanhe embebidos em café, alternados com creme com queijo mascarpone"),
+
+
+  MenuItem(
+      "Tiramisu1",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png?t=2023-07-31T05%3A21%3A53.946Z",
+      16.0,
+      "Biscoitos champanhe embebidos em café, alternados com creme com queijo mascarpone"),
+  MenuItem(
+      "Tiramisu2",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png?t=2023-07-31T05%3A21%3A53.946Z",
+      16.0,
+      "Biscoitos champanhe embebidos em café, alternados com creme com queijo mascarpone"),
+  MenuItem(
+      "Tiramisu3",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png?t=2023-07-31T05%3A21%3A53.946Z",
+      16.0,
+      "Biscoitos champanhe embebidos em café, alternados com creme com queijo mascarpone"),
 ];
 
 var dataMenus = [
