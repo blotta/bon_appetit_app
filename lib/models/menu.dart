@@ -1,7 +1,8 @@
 class Restaurant {
-  const Restaurant(this.name, this.menus);
+  const Restaurant(this.name, this.menus, this.address);
   final String name;
   final List<Menu> menus;
+  final String address;
 }
 
 class Menu {

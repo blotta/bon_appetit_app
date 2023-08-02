@@ -38,7 +38,7 @@ class RestaurantsScreen extends StatelessWidget {
             return ListTile(
               onTap: () => navigateToRestaurantDetails(dataRestaurants[index]),
               title: Text(dataRestaurants[index].name),
-              trailing: Icon(Icons.arrow_right_alt, size: 40),
+              trailing: const Icon(Icons.arrow_right_alt, size: 40),
             );
           },
         ),

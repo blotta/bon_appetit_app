@@ -8,7 +8,6 @@ final theme = ThemeData(
   colorScheme: ColorScheme.fromSeed(
       seedColor: const Color.fromARGB(255, 255, 107, 26),
       brightness: Brightness.light,
-      onSurface: Colors.white,
       surface: const Color.fromARGB(255, 255, 107, 26)),
   textTheme: GoogleFonts.latoTextTheme(),
 );

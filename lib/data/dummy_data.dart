@@ -63,4 +63,4 @@ var dataMenus = [
     MenuSection("Sobremesas", dataItems.sublist(7, 9)),
   ])
 ];
-var dataRestaurants = [Restaurant("Bar do Zé", dataMenus)];
+var dataRestaurants = [Restaurant("Bar do Zé", dataMenus, "Rua Galvão Bueno, 123")];
