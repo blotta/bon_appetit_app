@@ -1,6 +1,7 @@
 import 'package:bon_appetit_app/data/dummy_data.dart';
 import 'package:bon_appetit_app/models/menu.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_details.dart';
+import 'package:bon_appetit_app/screens/profile/section_edit.dart';
 import 'package:flutter/material.dart';
 
 class MenuEditScreen extends StatefulWidget {
@@ -47,6 +48,13 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
 
   @override
   Widget build(BuildContext context) {
+
+    void navigateToSectionEdit(MenuSection section) {
+        Navigator.of(context).push(MaterialPageRoute(
+            builder: (ctx) => SectionEditScreen(section: section)));
+
+    }
+
     return Scaffold(
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.surface,
@@ -83,7 +91,7 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                           itemBuilder: (context, index) {
                             return ListTile(
                               key: Key(_menuSections[index].name),
-                              onTap: () {},
+                              onTap: () => navigateToSectionEdit(_menuSections[index]),
                               title: Text(_menuSections[index].name),
                               trailing: const Icon(Icons.arrow_right_alt),
                               leading: ReorderableDragStartListener(
