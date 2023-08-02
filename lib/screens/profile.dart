@@ -1,3 +1,4 @@
+import 'package:bon_appetit_app/screens/profile/restaurants.dart';
 import 'package:flutter/material.dart';
 
 class ProfileScreen extends StatelessWidget {
@@ -5,6 +6,11 @@ class ProfileScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void navigateToRestaurants() {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => RestaurantsScreen()));
+    }
+
     return Scaffold(
       body: SingleChildScrollView(
         child: Column(
@@ -89,7 +95,7 @@ class ProfileScreen extends StatelessWidget {
                   Text('Meus Restaurantes',
                       style: Theme.of(context).textTheme.titleLarge),
                   ListTile(
-                    onTap: () {},
+                    onTap: navigateToRestaurants,
                     leading: Icon(Icons.storefront_outlined,
                         color: Theme.of(context).colorScheme.surface),
                     title: const Text('Restaurantes'),
