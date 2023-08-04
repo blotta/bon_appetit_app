@@ -1,4 +1,5 @@
 import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/screens/profile/item_edit.dart';
 import 'package:bon_appetit_app/screens/profile/items.dart';
 import 'package:flutter/material.dart';
 
@@ -35,14 +36,19 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
   }
 
   void navigateToItemsScreenAndGetItem() async {
-    var newItem = await Navigator.of(context).push<MenuItem>(
-        MaterialPageRoute(builder: (ctx) => const ItemsScreen()));
+    var newItem = await Navigator.of(context).push<MenuItem>(MaterialPageRoute(
+        builder: (ctx) => const ItemsScreen(returnItemBehaviour: true)));
 
     if (newItem != null && !_sectionItems.any((i) => i.name == newItem.name)) {
       setState(() {
         _sectionItems.add(newItem);
       });
     }
+  }
+
+  navigateToItemEditScreen(MenuItem? item) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (ctx) => ItemEditScreen(item: item)));
   }
 
   void removeItem(MenuItem item) {
@@ -124,7 +130,8 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                               return false;
                             },
                             child: ListTile(
-                              onTap: () {},
+                              onTap: () => navigateToItemEditScreen(
+                                  _sectionItems[index]),
                               title: Text(_sectionItems[index].name),
                               trailing: const Icon(Icons.arrow_right_alt),
                               leading: ReorderableDragStartListener(

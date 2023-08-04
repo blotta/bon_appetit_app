@@ -1,9 +1,12 @@
 import 'package:bon_appetit_app/data/dummy_data.dart';
 import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/screens/profile/item_edit.dart';
 import 'package:flutter/material.dart';
 
 class ItemsScreen extends StatefulWidget {
-  const ItemsScreen({super.key});
+  const ItemsScreen({super.key, this.returnItemBehaviour = false});
+
+  final bool returnItemBehaviour;
 
   @override
   State<ItemsScreen> createState() => _ItemsScreenState();
@@ -19,6 +22,11 @@ class _ItemsScreenState extends State<ItemsScreen> {
     itemNameController.addListener(_search);
 
     _search();
+  }
+
+  void navigateToItemEditScreen(MenuItem? item) {
+    Navigator.of(context)
+        .push(MaterialPageRoute(builder: (ctx) => ItemEditScreen(item: item)));
   }
 
   void _search() {
@@ -57,7 +65,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
         title: const Text('Itens'),
         actions: [
           IconButton(
-            onPressed: () {},
+            onPressed: () => navigateToItemEditScreen(null),
             icon: const Icon(Icons.add),
           )
         ],
@@ -88,7 +96,10 @@ class _ItemsScreenState extends State<ItemsScreen> {
                         return ListTile(
                           onTap: () => returnItem(searchItems[index]),
                           title: Text(searchItems[index].name),
-                          trailing: const Icon(Icons.arrow_right_alt),
+                          trailing: IconButton(
+                            icon: const Icon(Icons.edit),
+                            onPressed: () => navigateToItemEditScreen(searchItems[index]),
+                          ),
                         );
                       },
                     ),
