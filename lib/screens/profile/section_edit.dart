@@ -35,8 +35,18 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
   }
 
   void navigateToItemsScreenAndGetItem() async {
-    var newItem = await Navigator.of(context)
-        .push<MenuItem>(MaterialPageRoute(builder: (ctx) => const ItemsScreen()));
+    var newItem = await Navigator.of(context).push<MenuItem>(
+        MaterialPageRoute(builder: (ctx) => const ItemsScreen()));
+
+    if (newItem != null && !_sectionItems.any((i) => i.name == newItem.name)) {
+      setState(() {
+        _sectionItems.add(newItem);
+      });
+    }
+  }
+
+  void removeItem(MenuItem item) {
+    _sectionItems.remove(item);
   }
 
   @override
@@ -84,16 +94,45 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                         buildDefaultDragHandles: false,
                         itemCount: _sectionItems.length,
                         itemBuilder: (context, index) {
-                          return ListTile(
+                          return Dismissible(
                             key: Key(_sectionItems[index].name),
-                            onTap: () {},
-                            title: Text(_sectionItems[index].name),
-                            trailing: const Icon(Icons.arrow_right_alt),
-                            leading: ReorderableDragStartListener(
-                              index: index,
-                              child: Icon(
-                                Icons.drag_handle,
-                                color: Theme.of(context).colorScheme.surface,
+                            background: Container(
+                              alignment: Alignment.centerLeft,
+                              decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                      colors: [Colors.white, Colors.red])),
+                              child: const Icon(
+                                Icons.delete,
+                                color: Colors.red,
+                              ),
+                            ),
+                            secondaryBackground: Container(
+                              alignment: Alignment.centerRight,
+                              decoration: const BoxDecoration(
+                                  gradient: LinearGradient(
+                                      colors: [Colors.blue, Colors.white])),
+                              child: const Icon(
+                                Icons.remove_red_eye,
+                                color: Colors.blue,
+                              ),
+                            ),
+                            confirmDismiss: (direction) async {
+                              if (direction == DismissDirection.startToEnd) {
+                                removeItem(_sectionItems[index]);
+                                return true;
+                              }
+                              return false;
+                            },
+                            child: ListTile(
+                              onTap: () {},
+                              title: Text(_sectionItems[index].name),
+                              trailing: const Icon(Icons.arrow_right_alt),
+                              leading: ReorderableDragStartListener(
+                                index: index,
+                                child: Icon(
+                                  Icons.drag_handle,
+                                  color: Theme.of(context).colorScheme.surface,
+                                ),
                               ),
                             ),
                           );

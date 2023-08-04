@@ -1,4 +1,5 @@
 import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/screens/profile/items.dart';
 import 'package:bon_appetit_app/screens/profile/menus.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_edit.dart';
 import 'package:flutter/material.dart';
@@ -18,6 +19,11 @@ class RestaurantDetailsScreen extends StatelessWidget {
     void navigateToMenusScreen() {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (ctx) => const MenusScreen()));
+    }
+
+    void navigateToItemsScreen() {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (ctx) => const ItemsScreen()));
     }
 
     return Scaffold(
@@ -58,19 +64,19 @@ class RestaurantDetailsScreen extends StatelessWidget {
               children: [
                 ListTile(
                   title: const Text('Cardápios'),
-                  leading: const Icon(Icons.menu_book),
+                  leading: Icon(Icons.menu_book, color: Theme.of(context).colorScheme.surface),
                   trailing: const Icon(Icons.arrow_right_alt, size: 40),
                   onTap: navigateToMenusScreen,
                 ),
                 ListTile(
                   title: const Text('Itens'),
-                  leading: const Icon(Icons.fastfood),
+                  leading: Icon(Icons.fastfood, color: Theme.of(context).colorScheme.surface),
                   trailing: const Icon(Icons.arrow_right_alt, size: 40),
-                  onTap: () => {},
+                  onTap: navigateToItemsScreen,
                 ),
                 ListTile(
                   title: const Text('Atendentes'),
-                  leading: const Icon(Icons.people),
+                  leading: Icon(Icons.people, color: Theme.of(context).colorScheme.surface),
                   trailing: const Icon(Icons.arrow_right_alt, size: 40),
                   onTap: () => {},
                 ),

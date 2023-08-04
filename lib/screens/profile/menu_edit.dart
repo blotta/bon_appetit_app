@@ -46,13 +46,15 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
     }
   }
 
+  void _deleteSection(MenuSection section) {
+    _menuSections.remove(section);
+  }
+
   @override
   Widget build(BuildContext context) {
-
     void navigateToSectionEdit(MenuSection section) {
-        Navigator.of(context).push(MaterialPageRoute(
-            builder: (ctx) => SectionEditScreen(section: section)));
-
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (ctx) => SectionEditScreen(section: section)));
     }
 
     return Scaffold(
@@ -89,16 +91,65 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                           buildDefaultDragHandles: false,
                           itemCount: _menuSections.length,
                           itemBuilder: (context, index) {
-                            return ListTile(
+                            return Dismissible(
                               key: Key(_menuSections[index].name),
-                              onTap: () => navigateToSectionEdit(_menuSections[index]),
-                              title: Text(_menuSections[index].name),
-                              trailing: const Icon(Icons.arrow_right_alt),
-                              leading: ReorderableDragStartListener(
-                                index: index,
-                                child: Icon(
-                                  Icons.drag_handle,
-                                  color: Theme.of(context).colorScheme.surface,
+                              background: Container(
+                                alignment: Alignment.centerLeft,
+                                decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [Colors.white, Colors.red])),
+                                child: const Icon(
+                                  Icons.delete,
+                                  color: Colors.red,
+                                ),
+                              ),
+                              secondaryBackground: Container(
+                                alignment: Alignment.centerRight,
+                                decoration: const BoxDecoration(
+                                    gradient: LinearGradient(
+                                        colors: [Colors.blue, Colors.white])),
+                                child: const Icon(
+                                  Icons.remove_red_eye,
+                                  color: Colors.blue,
+                                ),
+                              ),
+                              confirmDismiss: (direction) async {
+                                if (direction == DismissDirection.startToEnd) {
+                                  bool excludeSection = await showDialog(
+                                      context: context,
+                                      builder: (ctx) {
+                                        return AlertDialog(
+                                          content: const Text(
+                                              'Deseja mesmo excluir a seção?'),
+                                          actions: [
+                                            TextButton(
+                                              onPressed: () => Navigator.of(context).pop(false),
+                                              child: const Text('Não'),
+                                            ),
+                                            ElevatedButton(
+                                                onPressed: () => Navigator.of(context).pop(true),
+                                                child: const Text('Sim, excluir'))
+                                          ],
+                                        );
+                                      });
+                                  if (excludeSection) {
+                                    _deleteSection(_menuSections[index]);
+                                  }
+                                  return excludeSection;
+                                }
+                              },
+                              child: ListTile(
+                                onTap: () =>
+                                    navigateToSectionEdit(_menuSections[index]),
+                                title: Text(_menuSections[index].name),
+                                trailing: const Icon(Icons.arrow_right_alt),
+                                leading: ReorderableDragStartListener(
+                                  index: index,
+                                  child: Icon(
+                                    Icons.drag_handle,
+                                    color:
+                                        Theme.of(context).colorScheme.surface,
+                                  ),
                                 ),
                               ),
                             );

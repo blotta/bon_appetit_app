@@ -38,6 +38,10 @@ class _ItemsScreenState extends State<ItemsScreen> {
     });
   }
 
+  void returnItem(MenuItem item) {
+    Navigator.of(context).pop(item);
+  }
+
   @override
   void dispose() {
     itemNameController.dispose();
@@ -82,7 +86,7 @@ class _ItemsScreenState extends State<ItemsScreen> {
                       itemCount: searchItems.length,
                       itemBuilder: (context, index) {
                         return ListTile(
-                          onTap: () {},
+                          onTap: () => returnItem(searchItems[index]),
                           title: Text(searchItems[index].name),
                           trailing: const Icon(Icons.arrow_right_alt),
                         );

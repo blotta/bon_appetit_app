@@ -12,9 +12,10 @@ class Menu {
 }
 
 class MenuSection {
-  const MenuSection(this.name, this.items);
-  final String name;
+  MenuSection(this.name, this.items);
+  String name;
   final List<MenuItem> items;
+  bool active = true;
 }
 
 class MenuItem {
