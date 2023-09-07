@@ -1,3 +1,4 @@
+import 'package:bon_appetit_app/screens/profile/profile_edit.dart';
 import 'package:bon_appetit_app/screens/profile/restaurants.dart';
 import 'package:flutter/material.dart';
 
@@ -9,6 +10,11 @@ class ProfileScreen extends StatelessWidget {
     void navigateToRestaurants() {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (ctx) => RestaurantsScreen()));
+    }
+
+    void navigateToProfileEdit() {
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => ProfileEditScreen()));
     }
 
     return Scaffold(
@@ -69,7 +75,7 @@ class ProfileScreen extends StatelessWidget {
                   Text('Minha Conta',
                       style: Theme.of(context).textTheme.titleLarge),
                   ListTile(
-                    onTap: () {},
+                    onTap: navigateToProfileEdit,
                     leading: Icon(Icons.info_outline,
                         color: Theme.of(context).colorScheme.surface),
                     title: const Text('Meu Perfil'),

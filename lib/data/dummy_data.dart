@@ -4,36 +4,36 @@ var dataItems = const [
   // Entradas
   MenuItem(
       "Bruschetta",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/bruschetta.png?t=2023-07-31T05%3A16%3A54.492Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/bruschetta.png",
       20.0,
       "Opções de tomate, pepino ou presunto de parma."),
   MenuItem(
       "Ravioli Frito",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/ravioli-frito.png?t=2023-07-31T05%3A21%3A11.929Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/ravioli-frito.png",
       35.0,
       "Recheado com muçarela de bufala. Acompanha molho de tomate."),
   MenuItem(
       "Calamari Frito",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/calamari-frito.png?t=2023-07-31T05%3A20%3A03.911Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/calamari-frito.png",
       26.0,
       "Nossa famosa lula frita. Acompanha limão siciliano."),
 
   // principal
   MenuItem(
       "Pizza",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/pizza.png?t=2023-07-31T05%3A21%3A23.991Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/pizza.png",
       73.0,
       "Massa integral com molho de tomate caseiro, queijo muçarela e pepperoni"),
   MenuItem(
       "Fettuccine Alfredo",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/fettuccine-alfredo.png?t=2023-07-31T05%3A21%3A31.256Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/fettuccine-alfredo.png",
       45.0,
       "Fettuccine ao famoso molho alfredo. Acompanha paillard de carne"),
 
   // Bebidas
   MenuItem(
       "Refrigerante 355mL",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/refrigerante-lata.png?t=2023-07-31T05%3A21%3A38.687Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/refrigerante-lata.png",
       7.0,
       "Coca-Cola (Zero), Guaraná Antartica (Zero)"),
   MenuItem(
