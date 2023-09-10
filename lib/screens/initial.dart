@@ -1,6 +1,7 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/screens/menu.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
+import 'package:bon_appetit_app/widgets/initial/restaurant_list_item.dart';
 import 'package:flutter/material.dart';
 
 class InitialScreen extends StatefulWidget {
@@ -22,7 +23,7 @@ class _InitialScreenState extends State<InitialScreen> {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        mainAxisAlignment: MainAxisAlignment.center,
+        // mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 60),
           Image.asset('images/bonappetit_logo.png'),
@@ -47,18 +48,19 @@ class _InitialScreenState extends State<InitialScreen> {
               }
 
               if (snapshot.hasData) {
-                return ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                        onTap: () {
-                          _selectRestaurant(snapshot.data![index].id);
-                        },
-                        title: Text(snapshot.data![index].title),
-                        subtitle: Text(snapshot.data![index].description),
-                      );
-                    });
+                return Expanded(
+                  child: ListView.builder(
+                      shrinkWrap: true,
+                      itemCount: snapshot.data!.length,
+                      itemBuilder: (context, index) {
+                        return Padding(
+                          padding: const EdgeInsets.all(8.0),
+                          child: RestaurantListItem(
+                              restaurant: snapshot.data![index],
+                              onSelectRestaurant: _selectRestaurant),
+                        );
+                      }),
+                );
               }
 
               return const Center(
