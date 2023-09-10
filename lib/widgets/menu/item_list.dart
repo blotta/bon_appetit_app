@@ -1,5 +1,4 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
-import 'package:bon_appetit_app/models/menu.dart';
 import 'package:bon_appetit_app/widgets/menu/item.dart';
 import 'package:flutter/material.dart';
 

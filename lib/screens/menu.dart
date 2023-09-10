@@ -1,7 +1,4 @@
-import 'package:bon_appetit_app/data/dummy_data.dart';
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
-import 'package:bon_appetit_app/models/menu.dart';
-import 'package:bon_appetit_app/providers/order.dart';
 import 'package:bon_appetit_app/screens/menu/item_details.dart';
 import 'package:bon_appetit_app/screens/menu/purchase.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
@@ -37,7 +34,9 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
 
   void _purchaseResume() {
     Navigator.push(
-        context, MaterialPageRoute(builder: (ctx) => const Purchase()));
+        context,
+        MaterialPageRoute(
+            builder: (ctx) => Purchase(restaurantId: widget.restaurantId)));
   }
 
   @override
@@ -61,8 +60,6 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
 
   @override
   Widget build(BuildContext context) {
-    final orderItems = ref.watch(orderItemsProvider);
-
     if (_menu == null) {
       return Scaffold(
         appBar: AppBar(

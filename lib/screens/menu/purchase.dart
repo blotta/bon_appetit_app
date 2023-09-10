@@ -1,29 +1,46 @@
 import 'package:bon_appetit_app/providers/comanda.dart';
-import 'package:bon_appetit_app/providers/order.dart';
+import 'package:bon_appetit_app/providers/menupreselect.dart';
 import 'package:bon_appetit_app/screens/menu/payment.dart';
+import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:bon_appetit_app/widgets/menu/order_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class Purchase extends ConsumerWidget {
-  const Purchase({super.key});
+  const Purchase({super.key, required this.restaurantId});
+
+  final String restaurantId;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
-    final orderItems = ref.watch(orderItemsProvider);
+    // final orderItems = ref.watch(orderItemsProvider);
+    final menuPreselect = ref.watch(menuPreselectProvider);
     final comanda = ref.watch(comandaProvider);
 
     void resetOrder() {
-      ref.read(orderItemsProvider.notifier).clear();
+      // ref.read(orderItemsProvider.notifier).clear();
+      ref.read(menuPreselectProvider.notifier).clear();
     }
 
-    void makeOrder() {
-      ref.read(comandaProvider.notifier).addItems(orderItems);
-      ref.read(orderItemsProvider.notifier).clear();
+    void makeOrder() async {
+      ScaffoldMessenger.of(context).clearSnackBars();
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text('Enviando pedido...')),
+      );
+
+      var orderNumber = await BonAppetitApiService().postMakeOrder(restaurantId, menuPreselect);
+
+      var msg = "Erro ao realizar pedido";
+      if (orderNumber >= 0) {
+        ref.read(comandaProvider.notifier).addItems(menuPreselect);
+        // ref.read(orderItemsProvider.notifier).clear();
+        ref.read(menuPreselectProvider.notifier).clear();
+        msg = "Pedido realizado!";
+      }
 
       ScaffoldMessenger.of(context).clearSnackBars();
       ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Pedido realizado!')),
+        SnackBar(content: Text(msg)),
       );
     }
 
@@ -43,7 +60,8 @@ class Purchase extends ConsumerWidget {
           children: [
             OrderList(
               title: "Itens do Pedido",
-              orderItems: orderItems,
+              // orderItems: orderItems,
+              orderItems: menuPreselect,
             ),
             const SizedBox(height: 20),
             Row(
@@ -51,10 +69,10 @@ class Purchase extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
-                    onPressed: orderItems.isEmpty ? null : resetOrder,
+                    onPressed: menuPreselect.isEmpty ? null : resetOrder,
                     child: const Text('Remover Itens')),
                 ElevatedButton(
-                  onPressed: orderItems.isEmpty ? null : makeOrder,
+                  onPressed: menuPreselect.isEmpty ? null : makeOrder,
                   child: const Text(
                     'Adicionar à comanda',
                     style: TextStyle(

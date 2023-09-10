@@ -1,11 +1,11 @@
-import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:flutter/material.dart';
 
 class OrderList extends StatelessWidget {
   const OrderList({super.key, required this.orderItems, required this.title});
 
   final String title;
-  final List<OrderItem> orderItems;
+  final List<DOrderItem> orderItems;
 
   double _getTotal() {
     return orderItems.fold(0.0, (previousValue, orderItem) {
@@ -25,20 +25,20 @@ class OrderList extends StatelessWidget {
                 .bodyLarge!
                 .copyWith(fontWeight: FontWeight.bold)),
         const SizedBox(height: 20),
-        for (final item in orderItems)
+        for (final orderItem in orderItems)
           Padding(
             padding: const EdgeInsets.symmetric(vertical: 8.0),
             child: Row(
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 Expanded(
-                  child: Text(item.item.name),
+                  child: Text(orderItem.item.name),
                 ),
                 Padding(
                   padding: const EdgeInsets.symmetric(horizontal: 8),
-                  child: Text('${item.quantity.toString()}x'),
+                  child: Text('${orderItem.quantity.toString()}x'),
                 ),
-                Text('\$ ${(item.item.price).toStringAsFixed(2)}'),
+                Text('\$ ${(orderItem.item.price).toStringAsFixed(2)}'),
               ],
             ),
           ),

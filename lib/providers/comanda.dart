@@ -1,16 +1,15 @@
-import 'package:bon_appetit_app/models/comanda.dart';
-import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class ComandaNotifier extends StateNotifier<Comanda> {
-  ComandaNotifier() : super(Comanda([]));
+class ComandaNotifier extends StateNotifier<DComanda> {
+  ComandaNotifier() : super(DComanda([]));
 
   void clear() {
-    state = Comanda([]);
+    state = DComanda([]);
   }
 
-  void addItems(List<OrderItem> items) {
-    List<OrderItem> currItems = [...state.items];
+  void addItems(List<DOrderItem> items) {
+    List<DOrderItem> currItems = [...state.items];
 
     for (final newItem in items) {
       if (currItems.any((i) => i.item.name == newItem.item.name)) {
@@ -20,11 +19,11 @@ class ComandaNotifier extends StateNotifier<Comanda> {
       }
     }
 
-    var newComanda = Comanda(currItems);
+    var newComanda = DComanda(currItems);
     state = newComanda;
   }
 }
 
 final comandaProvider =
-    StateNotifierProvider<ComandaNotifier, Comanda>(
+    StateNotifierProvider<ComandaNotifier, DComanda>(
         (ref) => ComandaNotifier());

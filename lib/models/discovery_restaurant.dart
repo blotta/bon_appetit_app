@@ -75,3 +75,16 @@ class DProduct {
         json['price'],
       );
 }
+
+
+class DOrderItem {
+  DOrderItem(this.item, this.quantity);
+  final DProduct item;
+  int quantity;
+}
+
+class DComanda {
+  DComanda(this.items);
+
+  final List<DOrderItem> items;
+}

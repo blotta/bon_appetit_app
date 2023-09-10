@@ -34,4 +34,48 @@ class BonAppetitApiService {
       throw Exception('Error loading restaurants');
     }
   }
+
+  Future<int> postMakeOrder(String restaurantId, List<DOrderItem> orderItems) async {
+    var url = Uri.parse("${Apis.baseUrl}/order");
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+
+    var items = [];
+    for (var orderItem in orderItems) {
+      Map<String, dynamic> item = {
+        "productId": orderItem.item.id,
+        "quantity": orderItem.quantity
+      };
+      items.add(item);
+    }
+    Map<String, dynamic> body = {
+      "partnerId": restaurantId,
+      "itens": items
+    };
+
+    var content = json.encode(body);
+
+    var response = await http.post(url, headers: headers, body: content);
+
+    if (response.statusCode == 201) {
+      var orderNumber = json.decode(response.body)['data']['number'];
+      return orderNumber;
+    }
+
+    return -1;
+  }
+
+  // Future<int> getOrder(int orderNumber) async {
+  //   var url = Uri.parse("${Apis.baseUrl}/order/${orderNumber}");
+
+  //   var response = await http.get(url);
+
+  //   if (response.statusCode == 200) {
+  //     var orderNumber = json.decode(response.body)['data']['number'];
+  //     return orderNumber;
+  //   }
+
+  //   return -1;
+  // }
 }

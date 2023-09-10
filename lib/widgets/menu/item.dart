@@ -1,7 +1,6 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
-import 'package:bon_appetit_app/providers/order.dart';
+import 'package:bon_appetit_app/providers/menupreselect.dart';
 import 'package:flutter/material.dart';
-import 'package:bon_appetit_app/models/menu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:transparent_image/transparent_image.dart';
 
@@ -42,7 +41,7 @@ class Item extends ConsumerWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    // ref.read(orderItemsProvider.notifier).addItem(item);
+                    ref.read(menuPreselectProvider.notifier).addItem(item);
 
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(

@@ -26,6 +26,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     Widget activePage = const InitialScreen();
 
     if (_selectedPageIndex == 1) {
+      // TODO: QR code screen
       // activePage = const MenuScreen(restaurantId: '',);
     }
 
