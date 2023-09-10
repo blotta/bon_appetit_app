@@ -2,7 +2,6 @@ import 'dart:io';
 
 import 'package:bon_appetit_app/data/dummy_data.dart';
 import 'package:bon_appetit_app/models/menu.dart';
-import 'package:bon_appetit_app/screens/profile/restaurant_details.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:transparent_image/transparent_image.dart';

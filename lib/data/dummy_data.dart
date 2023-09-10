@@ -38,36 +38,36 @@ var dataItems = const [
       "Coca-Cola (Zero), Guaraná Antartica (Zero)"),
   MenuItem(
       "Suco Natural",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/suco-natural.jpg?t=2023-07-31T05%3A21%3A43.149Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/suco-natural.jpg",
       10.0,
       "Laranja, maracujá, uva e limão"),
 
   // Sobremesas
   MenuItem(
       "Canoli",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/cannoli.jpg?t=2023-07-31T05%3A20%3A17.834Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/cannoli.jpg",
       28.0,
       "Massa doce frita, em formato de tubo, recheada com um creme de ricota"),
   MenuItem(
       "Tiramisu",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png?t=2023-07-31T05%3A21%3A53.946Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png",
       16.0,
       "Biscoitos champanhe embebidos em café, alternados com creme com queijo mascarpone"),
 
 
   MenuItem(
       "Tiramisu1",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png?t=2023-07-31T05%3A21%3A53.946Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png",
       16.0,
       "Biscoitos champanhe embebidos em café, alternados com creme com queijo mascarpone"),
   MenuItem(
       "Tiramisu2",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png?t=2023-07-31T05%3A21%3A53.946Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png",
       16.0,
       "Biscoitos champanhe embebidos em café, alternados com creme com queijo mascarpone"),
   MenuItem(
       "Tiramisu3",
-      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png?t=2023-07-31T05%3A21%3A53.946Z",
+      "https://yyejvqdyfvplnjygzgwv.supabase.co/storage/v1/object/public/images/tiramisu.png",
       16.0,
       "Biscoitos champanhe embebidos em café, alternados com creme com queijo mascarpone"),
 ];

@@ -1,8 +1,7 @@
-import 'dart:convert';
 
-import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/models/discovery_restaurant.dart';
+import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:flutter/material.dart';
-import 'package:http/http.dart' as http;
 
 class InitialScreen extends StatefulWidget {
   const InitialScreen({super.key});
@@ -12,36 +11,28 @@ class InitialScreen extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<InitialScreen> {
-  Future<List> getRestaurants() async {
-    var url = Uri.parse('http://10.0.2.2:7080/public/restaurants');
-    var response = await http.get(url);
-    if (response.statusCode == 200) {
-      return jsonDecode(utf8.decode(response.bodyBytes));
-    } else {
-      throw Exception('Error loading restaurants');
-    }
-  }
 
   @override
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
+        mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 60),
           Image.asset('images/bonappetit_logo.png'),
           const SizedBox(height: 24),
           const Text(
             'Leia o QR code para visualizar o cardápio ou escolha um restaurante disponível da lista abaixo',
+            // 'Leia o QR code para visualizar o cardápio',
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
           Text(
             'Restaurantes Disponíveis',
-            style: Theme.of(context).textTheme!.headlineSmall,
+            style: Theme.of(context).textTheme.headlineSmall,
           ),
-          FutureBuilder<List>(
-            future: getRestaurants(),
+          FutureBuilder<List<DiscoveryRestaurant>>(
+            future: BonAppetitApiService().getDiscoveryRestaurants(),
             builder: (context, snapshot) {
               if (snapshot.hasError) {
                 return const Center(
@@ -58,8 +49,8 @@ class _InitialScreenState extends State<InitialScreen> {
                         onTap: () {
                           
                         },
-                        title: Text(snapshot.data![index]['name']),
-                        subtitle: Text(snapshot.data![index]['address']),
+                        title: Text(snapshot.data![index].title),
+                        subtitle: Text(snapshot.data![index].description),
                       );
                     });
               }
