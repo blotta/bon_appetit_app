@@ -1,22 +1,32 @@
-import 'package:bon_appetit_app/data/dummy_data.dart';
-import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/models/partner_models.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_details.dart';
+import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:flutter/material.dart';
 
 class RestaurantEditScreen extends StatefulWidget {
   const RestaurantEditScreen({super.key, this.restaurant});
 
-  final Restaurant? restaurant;
+  final PartnerRestaurant? restaurant;
 
   @override
   State<RestaurantEditScreen> createState() => _RestaurantEditScreenState();
 }
 
 class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
-
   final _formKey = GlobalKey<FormState>();
+  String? restaurantId = null;
   var _enteredName = '';
-  var _enteredAddress = '';
+  var _enteredSpecialty = '';
+  var _enteredDescription = '';
+  var _enteredPhoneNumber = '11912345678';
+
+  var _enteredStreet = 'Av. Brasil';
+  var _enteredStreetNumber = '1234';
+  var _enteredZipCode = '01345-678';
+  var _enteredCity = 'São Paulo';
+  var _enteredDistrict = '';
+  var _enteredState = 'São Paulo';
+  var _enteredCountry = 'Brasil';
 
   @override
   void initState() {
@@ -24,30 +34,62 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
 
     if (widget.restaurant != null) {
       setState(() {
-        _enteredName = widget.restaurant!.name;
-        _enteredAddress = widget.restaurant!.address;
+        restaurantId = widget.restaurant!.id;
+
+        _enteredName = widget.restaurant!.title;
+        _enteredSpecialty = widget.restaurant!.specialty;
+        _enteredDescription = widget.restaurant!.description;
+        _enteredPhoneNumber = widget.restaurant!.phoneNumber;
+
+        _enteredStreet = widget.restaurant!.address!.streetName;
+        _enteredStreetNumber = widget.restaurant!.address!.streetNumber;
+        _enteredZipCode = widget.restaurant!.address!.zipCode;
+        _enteredCity = widget.restaurant!.address!.city;
+        _enteredDistrict = widget.restaurant!.address!.district;
+        _enteredState = widget.restaurant!.address!.state;
+        _enteredCountry = widget.restaurant!.address!.country;
       });
     }
   }
 
-  void _saveRestaurant() {
+  void _saveRestaurant() async {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      if (widget.restaurant != null) {
+        var address = Address(_enteredCountry, _enteredState, _enteredCity, _enteredDistrict, _enteredStreet, _enteredStreetNumber, _enteredZipCode);
+        var partner = PartnerRestaurant(
+            "", _enteredName, _enteredDescription, _enteredSpecialty, _enteredPhoneNumber, address);
+
+      if (restaurantId != null) {
         // edit
-        Navigator.of(context).pop();
+        var result = await BonAppetitApiService().putUpdatePartner(restaurantId!, partner);
+        if (result) {
+          Navigator.of(context).pop(true);
+        }
+        // Navigator.of(context).pop();
       } else {
         // new
-        var r = dataRestaurants[0];
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (ctx) => RestaurantDetailsScreen(restaurant: r)));
+        var partnerId = await BonAppetitApiService().postCreatePartner(partner);
+        if (partnerId != null) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (ctx) => RestaurantDetailsScreen(restaurantId: partnerId)));
+        }
       }
     }
   }
 
   @override
   Widget build(BuildContext context) {
+    var specialties = {
+      "Italiana": "Italiana",
+      "Brasileira": "Brasileira",
+      "Japonesa": "Japonesa",
+      "Chinesa": "Chinesa",
+      "Lanches": "Lanches",
+      "Saudável": "Saúdavel",
+      "Pizza": "Pizza"
+    };
+
     return Scaffold(
         appBar: AppBar(
           foregroundColor: Theme.of(context).colorScheme.surface,
@@ -68,12 +110,107 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
                         initialValue: _enteredName,
                         maxLength: 50,
                         decoration: const InputDecoration(label: Text('Nome')),
+                        onSaved: (value) {
+                          _enteredName = value!;
+                        },
+                      ),
+                      DropdownButtonFormField(
+                        decoration:
+                            const InputDecoration(label: Text('Especialidade')),
+                        value: specialties.containsValue(_enteredSpecialty) ? _enteredSpecialty : specialties.entries.first.value,
+                        items: specialties.entries
+                            .map((e) => DropdownMenuItem<String>(
+                                value: e.value, child: Text(e.key)))
+                            .toList(),
+                        onSaved: (value) {
+                          _enteredSpecialty = value!;
+                        },
+                        onChanged: (value) => {
+                          setState(() {
+                            _enteredSpecialty = value!;
+                          })
+                        },
                       ),
                       TextFormField(
-                        initialValue: _enteredAddress,
+                        initialValue: _enteredDescription,
+                        maxLength: 150,
+                        maxLines: 3,
+                        decoration:
+                            const InputDecoration(label: Text('Descrição')),
+                        onSaved: (value) {
+                          _enteredDescription = value!;
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: _enteredPhoneNumber,
+                        maxLength: 100,
+                        decoration:
+                            const InputDecoration(label: Text('Telefone')),
+                        onSaved: (value) {
+                          _enteredPhoneNumber = value!;
+                        },
+                      ),
+
+                      TextFormField(
+                        initialValue: _enteredStreet,
                         maxLength: 100,
                         decoration:
                             const InputDecoration(label: Text('Endereço')),
+                        onSaved: (value) {
+                          _enteredStreet = value!;
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: _enteredStreetNumber,
+                        maxLength: 100,
+                        decoration:
+                            const InputDecoration(label: Text('Número')),
+                        onSaved: (value) {
+                          _enteredStreetNumber = value!;
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: _enteredDistrict,
+                        maxLength: 100,
+                        decoration:
+                            const InputDecoration(label: Text('Bairro')),
+                        onSaved: (value) {
+                          _enteredDistrict = value!;
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: _enteredZipCode,
+                        maxLength: 100,
+                        decoration: const InputDecoration(label: Text('CEP')),
+                        onSaved: (value) {
+                          _enteredZipCode = value!;
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: _enteredCity,
+                        maxLength: 100,
+                        decoration:
+                            const InputDecoration(label: Text('Cidade')),
+                        onSaved: (value) {
+                          _enteredCity = value!;
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: _enteredState,
+                        maxLength: 100,
+                        decoration:
+                            const InputDecoration(label: Text('Estado')),
+                        onSaved: (value) {
+                          _enteredState = value!;
+                        },
+                      ),
+                      TextFormField(
+                        initialValue: _enteredCountry,
+                        maxLength: 100,
+                        decoration: const InputDecoration(label: Text('País')),
+                        onSaved: (value) {
+                          _enteredCountry = value!;
+                        },
                       ),
                       const SizedBox(height: 50),
                     ]),

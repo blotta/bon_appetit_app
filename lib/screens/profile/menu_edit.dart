@@ -39,9 +39,9 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
         Navigator.of(context).pop();
       } else {
         // new
-        var r = dataRestaurants[0];
-        Navigator.of(context).pushReplacement(MaterialPageRoute(
-            builder: (ctx) => RestaurantDetailsScreen(restaurant: r)));
+        // var r = dataRestaurants[0];
+        // Navigator.of(context).pushReplacement(MaterialPageRoute(
+        //     builder: (ctx) => RestaurantDetailsScreen(restaurant: r)));
       }
     }
   }

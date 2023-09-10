@@ -2,6 +2,7 @@ import 'dart:convert';
 
 import 'package:bon_appetit_app/config/apis.dart';
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
+import 'package:bon_appetit_app/models/partner_models.dart';
 import 'package:http/http.dart' as http;
 
 class BonAppetitApiService {
@@ -78,4 +79,91 @@ class BonAppetitApiService {
 
   //   return -1;
   // }
+
+  Future<List<PartnerRestaurant>> getPartnerRestaurants() async {
+    var url = Uri.parse("${Apis.baseUrl}/Partner");
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var jd = json.decode(response.body)["message"];
+      var str = json.encode(jd);
+      List<PartnerRestaurant> model = partnerRestaurantModelFromJson(str);
+      return model;
+    } else {
+      throw Exception('Error loading restaurants');
+    }
+  }
+
+  Future<PartnerRestaurant> getPartnerRestaurant(String restaurantId) async {
+    var url = Uri.parse("${Apis.baseUrl}/Partner/${restaurantId}");
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      var jd = json.decode(response.body)["message"];
+      return PartnerRestaurant.fromJson(jd);
+    } else {
+      throw Exception('Error loading restaurants');
+    }
+  }
+
+  Future<String?> postCreatePartner(PartnerRestaurant restaurant) async {
+    var url = Uri.parse("${Apis.baseUrl}/Partner");
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+
+    Map<String, dynamic> body = {
+      "title": restaurant.title,
+      "description": restaurant.description,
+      "phoneNumber": restaurant.phoneNumber,
+      "specialty": restaurant.specialty,
+      "street": restaurant.address!.streetName,
+      "streetNumber": restaurant.address!.streetNumber,
+      "city": restaurant.address!.city,
+      "zipCode": restaurant.address!.zipCode,
+      "country": restaurant.address!.country,
+      "state": restaurant.address!.state,
+      "district": restaurant.address!.district
+    };
+
+    var content = json.encode(body);
+
+    var response = await http.post(url, headers: headers, body: content);
+
+    if (response.statusCode == 201) {
+      var partnerId = json.decode(response.body)['aggregateId'];
+      return partnerId;
+    }
+
+    return null;
+  }
+
+  Future<bool> putUpdatePartner(String restaurantId, PartnerRestaurant restaurant) async {
+    var url = Uri.parse("${Apis.baseUrl}/Partner/$restaurantId");
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+
+    Map<String, dynamic> body = {
+      "title": restaurant.title,
+      "description": restaurant.description,
+      "phoneNumber": restaurant.phoneNumber,
+      "specialty": restaurant.specialty,
+      "street": restaurant.address!.streetName,
+      "streetNumber": restaurant.address!.streetNumber,
+      "city": restaurant.address!.city,
+      "zipCode": restaurant.address!.zipCode,
+      "country": restaurant.address!.country,
+      "state": restaurant.address!.state,
+      "district": restaurant.address!.district
+    };
+
+    var content = json.encode(body);
+
+    var response = await http.put(url, headers: headers, body: content);
+
+    if (response.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
 }

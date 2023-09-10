@@ -1,31 +1,83 @@
-import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/models/partner_models.dart';
 import 'package:bon_appetit_app/screens/profile/items.dart';
 import 'package:bon_appetit_app/screens/profile/menus.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_edit.dart';
+import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:flutter/material.dart';
 
-class RestaurantDetailsScreen extends StatelessWidget {
-  const RestaurantDetailsScreen({super.key, required this.restaurant});
+class RestaurantDetailsScreen extends StatefulWidget {
+  const RestaurantDetailsScreen({super.key, required this.restaurantId});
 
-  final Restaurant restaurant;
+  final String restaurantId;
+
+  @override
+  State<RestaurantDetailsScreen> createState() =>
+      _RestaurantDetailsScreenState();
+}
+
+class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
+  PartnerRestaurant? _restaurant = null;
+
+  @override
+  void initState() {
+    super.initState();
+    getData();
+  }
+
+  void getData() async {
+    var r =
+        await BonAppetitApiService().getPartnerRestaurant(widget.restaurantId);
+    setState(() {
+      _restaurant = r;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
-    void navigateToRestaurantEdit(Restaurant? r) {
-      Navigator.of(context).push(MaterialPageRoute(
+    void navigateToRestaurantEdit(PartnerRestaurant? r) async {
+      var changed = await Navigator.of(context).push<bool>(MaterialPageRoute(
           builder: (ctx) => RestaurantEditScreen(restaurant: r)));
+      if (changed != null && changed == true) {
+        var r = await BonAppetitApiService()
+            .getPartnerRestaurant(widget.restaurantId);
+        setState(() {
+          _restaurant = r;
+        });
+      }
     }
 
     void navigateToMenusScreen() {
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (ctx) => const MenusScreen()));
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => const MenusScreen()));
     }
 
     void navigateToItemsScreen() {
-      Navigator.of(context).push(MaterialPageRoute(
-          builder: (ctx) => const ItemsScreen()));
+      Navigator.of(context)
+          .push(MaterialPageRoute(builder: (ctx) => const ItemsScreen()));
     }
 
+    if (_restaurant == null) {
+      return Scaffold(
+        appBar: AppBar(
+          foregroundColor: Theme.of(context).colorScheme.surface,
+          backgroundColor: Colors.white,
+          title: Text(
+            "Carregando",
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+          ),
+        ),
+        body: const Column(
+          children: [
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+          ],
+        ),
+      );
+    }
     return Scaffold(
       appBar: AppBar(
         title: const Text('Restaurante'),
@@ -33,7 +85,7 @@ class RestaurantDetailsScreen extends StatelessWidget {
         backgroundColor: Colors.white,
         actions: [
           IconButton(
-            onPressed: () => navigateToRestaurantEdit(restaurant),
+            onPressed: () => navigateToRestaurantEdit(_restaurant),
             icon: const Icon(Icons.edit),
           )
         ],
@@ -46,17 +98,26 @@ class RestaurantDetailsScreen extends StatelessWidget {
             style: Theme.of(context).textTheme.titleMedium,
           ),
           Text(
-            restaurant.name,
+            _restaurant!.title,
             style: Theme.of(context).textTheme.headlineSmall,
           ),
           const SizedBox(height: 30),
           Text(
-            'Endereço',
+            'Especialidade',
             style: Theme.of(context).textTheme.titleMedium,
           ),
           Text(
-            restaurant.address,
+            _restaurant!.specialty,
             style: Theme.of(context).textTheme.headlineSmall,
+          ),
+          const SizedBox(height: 30),
+          Text(
+            'Descrição',
+            style: Theme.of(context).textTheme.titleMedium,
+          ),
+          Text(
+            _restaurant!.description,
+            style: Theme.of(context).textTheme.titleMedium,
           ),
           const SizedBox(height: 30),
           Expanded(
@@ -64,19 +125,22 @@ class RestaurantDetailsScreen extends StatelessWidget {
               children: [
                 ListTile(
                   title: const Text('Cardápios'),
-                  leading: Icon(Icons.menu_book, color: Theme.of(context).colorScheme.surface),
+                  leading: Icon(Icons.menu_book,
+                      color: Theme.of(context).colorScheme.surface),
                   trailing: const Icon(Icons.arrow_right_alt, size: 40),
                   onTap: navigateToMenusScreen,
                 ),
                 ListTile(
                   title: const Text('Itens'),
-                  leading: Icon(Icons.fastfood, color: Theme.of(context).colorScheme.surface),
+                  leading: Icon(Icons.fastfood,
+                      color: Theme.of(context).colorScheme.surface),
                   trailing: const Icon(Icons.arrow_right_alt, size: 40),
                   onTap: navigateToItemsScreen,
                 ),
                 ListTile(
                   title: const Text('Atendentes'),
-                  leading: Icon(Icons.people, color: Theme.of(context).colorScheme.surface),
+                  leading: Icon(Icons.people,
+                      color: Theme.of(context).colorScheme.surface),
                   trailing: const Icon(Icons.arrow_right_alt, size: 40),
                   onTap: () => {},
                 ),

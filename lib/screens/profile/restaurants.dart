@@ -1,7 +1,7 @@
-import 'package:bon_appetit_app/data/dummy_data.dart';
-import 'package:bon_appetit_app/models/menu.dart';
+import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_details.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_edit.dart';
+import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:flutter/material.dart';
 
 class RestaurantsScreen extends StatelessWidget {
@@ -9,14 +9,15 @@ class RestaurantsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    void navigateToRestaurantDetails(DiscoveryRestaurant r) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (ctx) => RestaurantDetailsScreen(restaurantId: r.id)));
+    }
 
-    void navigateToRestaurantDetails(Restaurant r) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => RestaurantDetailsScreen(restaurant: r)));
-    } 
-
-    void navigateToRestaurantEdit(Restaurant? r) {
-      Navigator.of(context).push(MaterialPageRoute(builder: (ctx) => RestaurantEditScreen(restaurant: r)));
-    } 
+    void navigateToRestaurantEdit(DiscoveryRestaurant? r) {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (ctx) => const RestaurantEditScreen(restaurant: null)));
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -32,13 +33,33 @@ class RestaurantsScreen extends StatelessWidget {
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: ListView.builder(
-          itemCount: dataRestaurants.length,
-          itemBuilder: (ctx, index) {
-            return ListTile(
-              onTap: () => navigateToRestaurantDetails(dataRestaurants[index]),
-              title: Text(dataRestaurants[index].name),
-              trailing: const Icon(Icons.arrow_right_alt, size: 40),
+        child: FutureBuilder<List<DiscoveryRestaurant>>(
+          future: BonAppetitApiService().getDiscoveryRestaurants(),
+          builder: (context, snapshot) {
+            if (snapshot.hasError) {
+              return const Center(
+                child: Text("Erro ao carregar restaurantes"),
+              );
+            }
+
+            if (snapshot.hasData) {
+              return Expanded(
+                child: ListView.builder(
+                    shrinkWrap: true,
+                    itemCount: snapshot.data!.length,
+                    itemBuilder: (context, index) {
+                      return ListTile(
+                          onTap: () => navigateToRestaurantDetails(
+                              snapshot.data![index]),
+                          title: Text(snapshot.data![index].title),
+                          trailing:
+                              const Icon(Icons.arrow_right_alt, size: 40));
+                    }),
+              );
+            }
+
+            return const Center(
+              child: CircularProgressIndicator(),
             );
           },
         ),
