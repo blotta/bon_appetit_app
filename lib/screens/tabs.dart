@@ -26,7 +26,7 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     Widget activePage = const InitialScreen();
 
     if (_selectedPageIndex == 1) {
-      activePage = const MenuScreen();
+      // activePage = const MenuScreen(restaurantId: '',);
     }
 
     if (_selectedPageIndex == 2) {

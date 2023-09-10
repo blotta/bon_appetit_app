@@ -1,3 +1,4 @@
+import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/models/menu.dart';
 import 'package:bon_appetit_app/providers/order.dart';
 import 'package:flutter/material.dart';
@@ -6,7 +7,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 class ItemDetails extends ConsumerWidget {
   const ItemDetails({super.key, required this.item});
 
-  final MenuItem item;
+  final DProduct item;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -18,7 +19,7 @@ class ItemDetails extends ConsumerWidget {
       body: Column(
         children: [
           Image.network(
-            item.imageUrl,
+            Uri.https("placehold.co", "/600x400/png", { "text": item.name}).toString(),
             height: 250,
             width: double.infinity,
             fit: BoxFit.cover,
@@ -46,7 +47,7 @@ class ItemDetails extends ConsumerWidget {
                 alignment: Alignment.centerRight,
                 child: ElevatedButton(
                   onPressed: () {
-                    ref.read(orderItemsProvider.notifier).addItem(item);
+                    // ref.read(orderItemsProvider.notifier).addItem(item);
 
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(

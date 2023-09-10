@@ -1,3 +1,4 @@
+import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/models/menu.dart';
 import 'package:bon_appetit_app/widgets/menu/item.dart';
 import 'package:flutter/material.dart';
@@ -5,9 +6,9 @@ import 'package:flutter/material.dart';
 class ItemList extends StatelessWidget {
   const ItemList({super.key, required this.items, required this.onSelectItem});
 
-  final List<MenuItem> items;
+  final List<DProduct> items;
 
-  final Function(MenuItem item) onSelectItem;
+  final Function(DProduct item) onSelectItem;
 
   @override
   Widget build(BuildContext context) {

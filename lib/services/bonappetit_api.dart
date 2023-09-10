@@ -19,4 +19,19 @@ class BonAppetitApiService {
       throw Exception('Error loading restaurants');
     }
   }
+
+  Future<DiscoveryRestaurant> getDiscoveryRestaurant(String restaurantId) async {
+    var url = Uri.parse("${Apis.baseUrl}/discover");
+    var response = await http.get(url);
+    if (response.statusCode == 200) {
+      // return jsonDecode(utf8.decode(response.bodyBytes));
+      var jd = json.decode(response.body)["message"];
+      var str = json.encode(jd);
+      List<DiscoveryRestaurant> model = discoveryRestaurantModelFromJson(str);
+      var rest = model.firstWhere((r) => r.id == restaurantId);
+      return rest;
+    } else {
+      throw Exception('Error loading restaurants');
+    }
+  }
 }

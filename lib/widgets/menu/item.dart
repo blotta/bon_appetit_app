@@ -1,3 +1,4 @@
+import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/providers/order.dart';
 import 'package:flutter/material.dart';
 import 'package:bon_appetit_app/models/menu.dart';
@@ -7,8 +8,8 @@ import 'package:transparent_image/transparent_image.dart';
 class Item extends ConsumerWidget {
   const Item({super.key, required this.item, required this.onSelectItem});
 
-  final MenuItem item;
-  final Function(MenuItem item) onSelectItem;
+  final DProduct item;
+  final Function(DProduct item) onSelectItem;
 
   @override
   Widget build(BuildContext context, WidgetRef ref) {
@@ -22,7 +23,7 @@ class Item extends ConsumerWidget {
           children: [
             FadeInImage(
               placeholder: MemoryImage(kTransparentImage),
-              image: NetworkImage(item.imageUrl),
+              image: NetworkImage(Uri.https("placehold.co", "/600x400/png", { "text": item.name}).toString()),
               fit: BoxFit.cover,
               height: 150,
               width: double.infinity,
@@ -41,7 +42,7 @@ class Item extends ConsumerWidget {
                 ),
                 TextButton(
                   onPressed: () {
-                    ref.read(orderItemsProvider.notifier).addItem(item);
+                    // ref.read(orderItemsProvider.notifier).addItem(item);
 
                     ScaffoldMessenger.of(context).clearSnackBars();
                     ScaffoldMessenger.of(context).showSnackBar(

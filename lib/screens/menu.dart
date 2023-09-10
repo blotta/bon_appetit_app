@@ -1,30 +1,36 @@
 import 'package:bon_appetit_app/data/dummy_data.dart';
+import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/models/menu.dart';
 import 'package:bon_appetit_app/providers/order.dart';
 import 'package:bon_appetit_app/screens/menu/item_details.dart';
 import 'package:bon_appetit_app/screens/menu/purchase.dart';
+import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:bon_appetit_app/widgets/menu/item_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class MenuScreen extends ConsumerStatefulWidget {
-  const MenuScreen({super.key});
+  const MenuScreen({super.key, required this.restaurantId});
+
+  final String restaurantId;
 
   @override
   ConsumerState<MenuScreen> createState() => _MenuScreenState();
 }
 
 class _MenuScreenState extends ConsumerState<MenuScreen> {
-  Menu? _menu;
-  MenuSection? _activeSection;
+  DMenu? _menu;
+  DMenuSection? _activeSection;
 
-  void _selectSection(MenuSection section) {
+  DiscoveryRestaurant? _restaurant;
+
+  void _selectSection(DMenuSection section) {
     setState(() {
       _activeSection = section;
     });
   }
 
-  void _selectItem(MenuItem item) {
+  void _selectItem(DProduct item) {
     Navigator.push(
         context, MaterialPageRoute(builder: (ctx) => ItemDetails(item: item)));
   }
@@ -38,13 +44,45 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   void initState() {
     super.initState();
     // ref.read(orderItemsProvider.notifier).clear();
-    _menu = dataMenus.first;
-    _activeSection = _menu!.sections.first;
+    // _menu = dataMenus.first;
+    // _activeSection = _menu!.sections.first;
+    _getData();
+  }
+
+  void _getData() async {
+    var r = await BonAppetitApiService()
+        .getDiscoveryRestaurant(widget.restaurantId);
+    setState(() {
+      _restaurant = r;
+      _menu = _restaurant!.menu;
+      _activeSection = _menu!.sections.first;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     final orderItems = ref.watch(orderItemsProvider);
+
+    if (_menu == null) {
+      return Scaffold(
+        appBar: AppBar(
+          title: Text(
+            "Carregando",
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+          ),
+        ),
+        body: const Column(
+          children: [
+            Center(
+              child: CircularProgressIndicator(),
+            ),
+          ],
+        ),
+      );
+    }
 
     return Scaffold(
       appBar: AppBar(
@@ -59,7 +97,10 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
         actions: [
           IconButton(
             onPressed: _purchaseResume,
-            icon: const Icon(Icons.receipt, color: Colors.white,),
+            icon: const Icon(
+              Icons.receipt,
+              color: Colors.white,
+            ),
           )
         ],
       ),
@@ -94,7 +135,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ItemList(
-                items: _activeSection!.items,
+                items: _activeSection!.products,
                 onSelectItem: _selectItem,
               ),
             ),

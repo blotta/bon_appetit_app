@@ -1,5 +1,5 @@
-
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
+import 'package:bon_appetit_app/screens/menu.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:flutter/material.dart';
 
@@ -11,6 +11,12 @@ class InitialScreen extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<InitialScreen> {
+  void _selectRestaurant(String restaurantId) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (ctx) => MenuScreen(restaurantId: restaurantId)));
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +53,7 @@ class _InitialScreenState extends State<InitialScreen> {
                     itemBuilder: (context, index) {
                       return ListTile(
                         onTap: () {
-                          
+                          _selectRestaurant(snapshot.data![index].id);
                         },
                         title: Text(snapshot.data![index].title),
                         subtitle: Text(snapshot.data![index].description),
