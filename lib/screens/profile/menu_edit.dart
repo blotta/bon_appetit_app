@@ -1,4 +1,3 @@
-import 'package:bon_appetit_app/data/dummy_data.dart';
 import 'package:bon_appetit_app/models/menu.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_details.dart';
 import 'package:bon_appetit_app/screens/profile/section_edit.dart';

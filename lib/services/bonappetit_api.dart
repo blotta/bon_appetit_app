@@ -36,6 +36,24 @@ class BonAppetitApiService {
     }
   }
 
+  Future<String> postLoginWithEmailAndPassword(String email, String password) async {
+    var url = Uri.parse('${Apis.baseUrl}/auth/login');
+    var response = await http.post(url, body: {
+      'email': email,
+      'password': password,
+    });
+
+    if (response.statusCode >= 400) {
+      throw Exception('Error logging in');
+    }
+
+    return json.decode(response.body)['access_token'];
+  }
+
+  Future<bool> postRegisterWithEmailAndPassword(String email, String password) async {
+    return await Future.delayed(const Duration(milliseconds: 500), () => true);
+  }
+
   Future<int> postMakeOrder(String restaurantId, List<DOrderItem> orderItems) async {
     var url = Uri.parse("${Apis.baseUrl}/order");
     var headers = <String, String>{
@@ -94,7 +112,7 @@ class BonAppetitApiService {
   }
 
   Future<PartnerRestaurant> getPartnerRestaurant(String restaurantId) async {
-    var url = Uri.parse("${Apis.baseUrl}/Partner/${restaurantId}");
+    var url = Uri.parse("${Apis.baseUrl}/Partner/$restaurantId");
     var response = await http.get(url);
     if (response.statusCode == 200) {
       var jd = json.decode(response.body)["message"];

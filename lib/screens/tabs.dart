@@ -1,7 +1,6 @@
 import 'package:bon_appetit_app/screens/profile.dart';
 import 'package:flutter/material.dart';
 import 'package:bon_appetit_app/screens/initial.dart';
-import 'package:bon_appetit_app/screens/menu.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TabsScreen extends ConsumerStatefulWidget {
