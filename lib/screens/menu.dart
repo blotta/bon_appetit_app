@@ -71,8 +71,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                 .copyWith(color: Theme.of(context).colorScheme.onPrimary),
           ),
         ),
-        body: const Column(
-          children: [
+        body: Column(
+          children: const [
             Center(
               child: CircularProgressIndicator(),
             ),

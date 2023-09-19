@@ -242,8 +242,24 @@ class BonAppetitApiService {
     var response = await http.post(url, headers: headers, body: content);
 
     if (response.statusCode == 201) {
-      var partnerId = json.decode(response.body)['aggregateId'];
-      return partnerId;
+      var sectionId = json.decode(response.body)['aggregateId'];
+      return sectionId;
+    }
+
+    return null;
+  }
+
+  Future<String?> deleteMenuSection(String menuId, String sectionId) async {
+    var url = Uri.parse("${Apis.baseUrl}/Menu/$menuId/Section/$sectionId");
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+
+    var response = await http.delete(url, headers: headers);
+
+    if (response.statusCode == 201) {
+      var sectionId = json.decode(response.body)['aggregateId'];
+      return sectionId;
     }
 
     return null;

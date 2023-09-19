@@ -1,6 +1,9 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/models/menu.dart';
 import 'package:bon_appetit_app/screens/profile/section_edit.dart';
+import 'package:bon_appetit_app/services/bonappetit_api.dart';
+import 'package:bon_appetit_app/utils/info.dart';
+import 'package:bon_appetit_app/utils/input.dart';
 import 'package:flutter/material.dart';
 
 class MenuEditScreen extends StatefulWidget {
@@ -16,6 +19,10 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
   final _formKey = GlobalKey<FormState>();
   var _enteredName = '';
   List<DMenuSection> _menuSections = [];
+
+  final GlobalKey<FormState> _newSectionFormKey = GlobalKey<FormState>();
+
+  final _newSectionNameController = TextEditingController();
 
   @override
   void initState() {
@@ -35,8 +42,33 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
     }
   }
 
-  void _deleteSection(String menuSectionId) {
-    // _menuSections.remove(section);
+  Future _createSection(String secName) async {
+    var newSec = DMenuSection('', secName, []);
+    var newSecId = await BonAppetitApiService()
+        .postCreateMenuSection(widget.menu.id, newSec);
+    if (newSecId != null) {
+      setState(() {
+        _menuSections.add(DMenuSection(newSecId, secName, []));
+      });
+    }
+  }
+
+  Future<bool> _deleteSection(String menuSectionId) async {
+    var secId = await BonAppetitApiService()
+        .deleteMenuSection(widget.menu.id, menuSectionId);
+    if (secId != null) {
+      setState(() {
+        // _menuSections.remove(section);
+      });
+      return true;
+    }
+    return false;
+  }
+
+  @override
+  void dispose() {
+    _newSectionNameController.dispose();
+    super.dispose();
   }
 
   @override
@@ -104,32 +136,28 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                               ),
                               confirmDismiss: (direction) async {
                                 if (direction == DismissDirection.startToEnd) {
-                                  bool excludeSection = await showDialog(
-                                      context: context,
-                                      builder: (ctx) {
-                                        return AlertDialog(
-                                          content: const Text(
-                                              'Deseja mesmo excluir a seção?'),
-                                          actions: [
-                                            TextButton(
-                                              onPressed: () => Navigator.of(context).pop(false),
-                                              child: const Text('Não'),
-                                            ),
-                                            ElevatedButton(
-                                                onPressed: () => Navigator.of(context).pop(true),
-                                                child: const Text('Sim, excluir'))
-                                          ],
-                                        );
-                                      });
+                                  bool excludeSection = await confirmDialog(
+                                      context, "Deseja mesmo excluir a seção?",
+                                      yesText: "Sim, excluir");
                                   if (excludeSection) {
                                     // _deleteSection(_menuSections[index]);
+                                    loadingDialog(
+                                        context, "Excluindo seção...");
+                                    var success = await _deleteSection(
+                                        _menuSections[index].id);
+                                    Navigator.of(context).pop();
+                                    if (!success) {
+                                      showErrorSnackbar(context,
+                                          "Erro ao tentar excluir seção");
+                                    }
+                                    return success;
                                   }
                                   return excludeSection;
                                 }
                               },
                               child: ListTile(
                                 onTap: () {
-                                    // navigateToSectionEdit(_menuSections[index])
+                                  // navigateToSectionEdit(_menuSections[index])
                                 },
                                 title: Text(_menuSections[index].name),
                                 trailing: const Icon(Icons.arrow_right_alt),
@@ -158,18 +186,31 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                         SizedBox(
                           width: double.infinity,
                           child: ElevatedButton(
-                            onPressed: () {
-                              String baseName = "Nova seção";
-                              String name = baseName;
-                              int counter = 1;
-                              while (_menuSections
-                                  .any((sec) => sec.name == name)) {
-                                name = '$baseName $counter';
-                                counter++;
+                            onPressed: () async {
+                              // var secName = await newSectionDialog(context);
+                              var secName = await getStringDialog(
+                                  context,
+                                  _newSectionNameController,
+                                  _newSectionFormKey,
+                                  "Nova Seção",
+                                  "Nome da seção");
+                              print(secName);
+                              if (secName != null) {
+                                loadingDialog(context, null);
+                                await _createSection(secName);
+                                Navigator.of(context).pop();
                               }
-                              setState(() {
-                                // _menuSections.add(MenuSection(name, []));
-                              });
+                              // String baseName = "Nova seção";
+                              // String name = baseName;
+                              // int counter = 1;
+                              // while (_menuSections
+                              //     .any((sec) => sec.name == name)) {
+                              //   name = '$baseName $counter';
+                              //   counter++;
+                              // }
+                              // setState(() {
+                              // _menuSections.add(MenuSection(name, []));
+                              // });
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:
