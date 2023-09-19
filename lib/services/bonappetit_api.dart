@@ -288,4 +288,20 @@ class BonAppetitApiService {
 
     return null;
   }
+
+  Future<String?> deleteMenuSectionProduct(String menuId, String sectionId, String productId) async {
+    var url = Uri.parse("${Apis.baseUrl}/Menu/$menuId/Section/$sectionId/Product/$productId");
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+
+    var response = await http.delete(url, headers: headers);
+
+    if (response.statusCode == 201) {
+      var deletedProductId = json.decode(response.body)['aggregateId'];
+      return deletedProductId;
+    }
+
+    return null;
+  }
 }

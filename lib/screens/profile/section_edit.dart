@@ -1,6 +1,8 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/screens/profile/product_edit.dart';
 import 'package:bon_appetit_app/screens/profile/items.dart';
+import 'package:bon_appetit_app/services/bonappetit_api.dart';
+import 'package:bon_appetit_app/utils/info.dart';
 import 'package:flutter/material.dart';
 
 class SectionEditScreen extends StatefulWidget {
@@ -63,8 +65,14 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
     }
   }
 
-  void removeItem(DProduct item) {
-    _sectionProducts.remove(item);
+  Future<bool> deleteProduct(DProduct product) async {
+    var prodId = await BonAppetitApiService().deleteMenuSectionProduct(widget.menuId, widget.section.id, product.id);
+    if (prodId != null) {
+      _sectionProducts.remove(product);
+      return true;
+    }
+    showErrorSnackbar(context, "Erro ao deletar produto");
+    return false;
   }
 
   @override
@@ -138,8 +146,8 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                             ),
                             confirmDismiss: (direction) async {
                               if (direction == DismissDirection.startToEnd) {
-                                removeItem(_sectionProducts[index]);
-                                return true;
+                                var success = deleteProduct(_sectionProducts[index]);
+                                return success;
                               }
                               return false;
                             },
