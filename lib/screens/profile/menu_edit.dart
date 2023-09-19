@@ -1,12 +1,12 @@
+import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/models/menu.dart';
-import 'package:bon_appetit_app/screens/profile/restaurant_details.dart';
 import 'package:bon_appetit_app/screens/profile/section_edit.dart';
 import 'package:flutter/material.dart';
 
 class MenuEditScreen extends StatefulWidget {
-  const MenuEditScreen({super.key, this.menu});
+  const MenuEditScreen({super.key, required this.menu});
 
-  final Menu? menu;
+  final DMenu menu;
 
   @override
   State<MenuEditScreen> createState() => _MenuEditScreenState();
@@ -15,38 +15,28 @@ class MenuEditScreen extends StatefulWidget {
 class _MenuEditScreenState extends State<MenuEditScreen> {
   final _formKey = GlobalKey<FormState>();
   var _enteredName = '';
-  List<MenuSection> _menuSections = [];
+  List<DMenuSection> _menuSections = [];
 
   @override
   void initState() {
     super.initState();
 
-    if (widget.menu != null) {
-      setState(() {
-        _enteredName = widget.menu!.name;
-        _menuSections = widget.menu!.sections;
-      });
-    }
+    setState(() {
+      _enteredName = widget.menu.name;
+      _menuSections = widget.menu.sections;
+    });
   }
 
   void _saveMenu() {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-      if (widget.menu != null) {
-        // edit
-        Navigator.of(context).pop();
-      } else {
-        // new
-        // var r = dataRestaurants[0];
-        // Navigator.of(context).pushReplacement(MaterialPageRoute(
-        //     builder: (ctx) => RestaurantDetailsScreen(restaurant: r)));
-      }
+      Navigator.of(context).pop();
     }
   }
 
-  void _deleteSection(MenuSection section) {
-    _menuSections.remove(section);
+  void _deleteSection(String menuSectionId) {
+    // _menuSections.remove(section);
   }
 
   @override
@@ -60,7 +50,7 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
       appBar: AppBar(
         foregroundColor: Theme.of(context).colorScheme.surface,
         backgroundColor: Colors.white,
-        title: Text(widget.menu == null ? 'Novo Cardápio' : 'Editar Cardápio'),
+        title: const Text('Editar Cardápio'),
       ),
       body: Padding(
         padding: const EdgeInsets.all(20),
@@ -132,14 +122,15 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                                         );
                                       });
                                   if (excludeSection) {
-                                    _deleteSection(_menuSections[index]);
+                                    // _deleteSection(_menuSections[index]);
                                   }
                                   return excludeSection;
                                 }
                               },
                               child: ListTile(
-                                onTap: () =>
-                                    navigateToSectionEdit(_menuSections[index]),
+                                onTap: () {
+                                    // navigateToSectionEdit(_menuSections[index])
+                                },
                                 title: Text(_menuSections[index].name),
                                 trailing: const Icon(Icons.arrow_right_alt),
                                 leading: ReorderableDragStartListener(
@@ -177,7 +168,7 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                                 counter++;
                               }
                               setState(() {
-                                _menuSections.add(MenuSection(name, []));
+                                // _menuSections.add(MenuSection(name, []));
                               });
                             },
                             style: ElevatedButton.styleFrom(
@@ -206,7 +197,7 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                       textStyle: Theme.of(context).textTheme.bodyLarge,
                       shape: BeveledRectangleBorder(
                           borderRadius: BorderRadius.circular(2))),
-                  child: Text(widget.menu == null ? 'CRIAR' : 'SALVAR'),
+                  child: const Text('SALVAR'),
                 ),
               ),
             )

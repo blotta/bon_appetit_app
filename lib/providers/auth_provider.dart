@@ -1,4 +1,3 @@
-import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:jwt_decoder/jwt_decoder.dart';

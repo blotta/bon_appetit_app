@@ -37,6 +37,7 @@ class BonAppetitApiService {
   }
 
   Future<String> postLoginWithEmailAndPassword(String email, String password) async {
+    return Future.delayed(const Duration(milliseconds: 200), () => 'faketoken');
     var url = Uri.parse('${Apis.baseUrl}/auth/login');
     var response = await http.post(url, body: {
       'email': email,
@@ -183,5 +184,92 @@ class BonAppetitApiService {
     }
 
     return false;
+  }
+
+  Future<List<DMenu>> getPartnerMenus(String restaurantId) async {
+    var rest = await this.getDiscoveryRestaurant(restaurantId);
+    if (rest.menu == null) {
+      return [];
+    }
+    return [rest.menu!];
+  }
+
+  Future<DMenu?> getPartnerMenu(String restaurantId, String menuId) async {
+    var rest = await this.getDiscoveryRestaurant(restaurantId);
+    if (menuId == rest.menu!.id) {
+      return rest.menu!;
+    }
+    return null;
+  }
+
+  Future<String?> postCreateMenu(String restaurantId, DMenu menu) async {
+    var url = Uri.parse("${Apis.baseUrl}/Menu");
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+
+    Map<String, dynamic> body = {
+      "name": menu.name,
+      "description": menu.name,
+      "partnerId": restaurantId,
+    };
+
+    var content = json.encode(body);
+
+    var response = await http.post(url, headers: headers, body: content);
+
+    if (response.statusCode == 201) {
+      var menuId = json.decode(response.body)['aggregateId'];
+      return menuId;
+    }
+
+    return null;
+  }
+
+  Future<String?> postCreateMenuSection(String menuId, DMenuSection section) async {
+    var url = Uri.parse("${Apis.baseUrl}/Menu/Section");
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+
+    Map<String, dynamic> body = {
+      "menuId": menuId,
+      "name": section.name,
+    };
+
+    var content = json.encode(body);
+
+    var response = await http.post(url, headers: headers, body: content);
+
+    if (response.statusCode == 201) {
+      var partnerId = json.decode(response.body)['aggregateId'];
+      return partnerId;
+    }
+
+    return null;
+  }
+
+  Future<String?> postCreateMenuSectionProduct(String menuId, String sectionId, DProduct product) async {
+    var url = Uri.parse("${Apis.baseUrl}/Menu/$menuId/Section/$sectionId/Product");
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+
+    Map<String, dynamic> body = {
+      "name": product.name,
+      "description": product.description,
+      "price": product.price,
+    };
+
+    var content = json.encode(body);
+
+    var response = await http.post(url, headers: headers, body: content);
+
+    if (response.statusCode == 201) {
+      var partnerId = json.decode(response.body)['aggregateId'];
+      return partnerId;
+    }
+
+    return null;
   }
 }

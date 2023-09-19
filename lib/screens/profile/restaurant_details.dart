@@ -47,8 +47,8 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
     }
 
     void navigateToMenusScreen() {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (ctx) => const MenusScreen()));
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (ctx) => MenusScreen(restaurantId: widget.restaurantId)));
     }
 
     void navigateToItemsScreen() {
@@ -61,20 +61,9 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
         appBar: AppBar(
           foregroundColor: Theme.of(context).colorScheme.surface,
           backgroundColor: Colors.white,
-          title: Text(
-            "Carregando",
-            style: Theme.of(context)
-                .textTheme
-                .titleLarge!
-                .copyWith(color: Theme.of(context).colorScheme.onPrimary),
-          ),
         ),
-        body: const Column(
-          children: [
-            Center(
-              child: CircularProgressIndicator(),
-            ),
-          ],
+        body: const Center(
+          child: CircularProgressIndicator(),
         ),
       );
     }

@@ -43,19 +43,16 @@ class RestaurantsScreen extends StatelessWidget {
             }
 
             if (snapshot.hasData) {
-              return Expanded(
-                child: ListView.builder(
-                    shrinkWrap: true,
-                    itemCount: snapshot.data!.length,
-                    itemBuilder: (context, index) {
-                      return ListTile(
-                          onTap: () => navigateToRestaurantDetails(
-                              snapshot.data![index]),
-                          title: Text(snapshot.data![index].title),
-                          trailing:
-                              const Icon(Icons.arrow_right_alt, size: 40));
-                    }),
-              );
+              return ListView.builder(
+                  shrinkWrap: true,
+                  itemCount: snapshot.data!.length,
+                  itemBuilder: (context, index) {
+                    return ListTile(
+                        onTap: () =>
+                            navigateToRestaurantDetails(snapshot.data![index]),
+                        title: Text(snapshot.data![index].title),
+                        trailing: const Icon(Icons.arrow_right_alt, size: 40));
+                  });
             }
 
             return const Center(
