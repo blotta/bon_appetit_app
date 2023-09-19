@@ -5,8 +5,16 @@ import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/models/partner_models.dart';
 import 'package:http/http.dart' as http;
 
-class BonAppetitApiService {
+class BonAppetitLoginResponse {
+  const BonAppetitLoginResponse({required this.id, required this.token});
+  final String id;
+  final String token;
 
+  factory BonAppetitLoginResponse.fromJson(Map<String, dynamic> json) =>
+      BonAppetitLoginResponse(id: json["id"], token: json["token"]);
+}
+
+class BonAppetitApiService {
   Future<List<DiscoveryRestaurant>> getDiscoveryRestaurants() async {
     var url = Uri.parse("${Apis.baseUrl}/discover");
     var response = await http.get(url);
@@ -21,7 +29,8 @@ class BonAppetitApiService {
     }
   }
 
-  Future<DiscoveryRestaurant> getDiscoveryRestaurant(String restaurantId) async {
+  Future<DiscoveryRestaurant> getDiscoveryRestaurant(
+      String restaurantId) async {
     var url = Uri.parse("${Apis.baseUrl}/discover");
     var response = await http.get(url);
     if (response.statusCode == 200) {
@@ -36,26 +45,55 @@ class BonAppetitApiService {
     }
   }
 
-  Future<String> postLoginWithEmailAndPassword(String email, String password) async {
-    return Future.delayed(const Duration(milliseconds: 200), () => 'faketoken');
-    var url = Uri.parse('${Apis.baseUrl}/auth/login');
-    var response = await http.post(url, body: {
-      'email': email,
+  Future<BonAppetitLoginResponse> postLoginWithEmailAndPassword(
+      String email, String password) async {
+
+    var url = Uri.parse('${Apis.baseUrl}/User/Login');
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+
+    var content = json.encode({
+      'username': email,
       'password': password,
     });
+
+    var response = await http.patch(url, headers: headers, body: content);
 
     if (response.statusCode >= 400) {
       throw Exception('Error logging in');
     }
 
-    return json.decode(response.body)['access_token'];
+    var jd = json.decode(response.body);
+    return BonAppetitLoginResponse.fromJson(jd);
   }
 
-  Future<bool> postRegisterWithEmailAndPassword(String email, String password) async {
-    return await Future.delayed(const Duration(milliseconds: 500), () => true);
+  Future<String> postRegisterWithEmailAndPassword(
+      String name, String email, String password) async {
+    var url = Uri.parse('${Apis.baseUrl}/User');
+
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+
+    var content = json.encode({
+      'name': name,
+      'username': email,
+      'password': password,
+    });
+
+    var response = await http.post(url, headers: headers, body: content);
+
+    if (response.statusCode >= 400) {
+      throw Exception('Error logging in');
+    }
+
+    var userId = response.body;
+    return userId;
   }
 
-  Future<int> postMakeOrder(String restaurantId, List<DOrderItem> orderItems) async {
+  Future<int> postMakeOrder(
+      String restaurantId, List<DOrderItem> orderItems) async {
     var url = Uri.parse("${Apis.baseUrl}/order");
     var headers = <String, String>{
       'Content-Type': 'application/json',
@@ -69,10 +107,7 @@ class BonAppetitApiService {
       };
       items.add(item);
     }
-    Map<String, dynamic> body = {
-      "partnerId": restaurantId,
-      "itens": items
-    };
+    Map<String, dynamic> body = {"partnerId": restaurantId, "itens": items};
 
     var content = json.encode(body);
 
@@ -155,7 +190,8 @@ class BonAppetitApiService {
     return null;
   }
 
-  Future<bool> putUpdatePartner(String restaurantId, PartnerRestaurant restaurant) async {
+  Future<bool> putUpdatePartner(
+      String restaurantId, PartnerRestaurant restaurant) async {
     var url = Uri.parse("${Apis.baseUrl}/Partner/$restaurantId");
     var headers = <String, String>{
       'Content-Type': 'application/json',
@@ -226,7 +262,8 @@ class BonAppetitApiService {
     return null;
   }
 
-  Future<String?> postCreateMenuSection(String menuId, DMenuSection section) async {
+  Future<String?> postCreateMenuSection(
+      String menuId, DMenuSection section) async {
     var url = Uri.parse("${Apis.baseUrl}/Menu/Section");
     var headers = <String, String>{
       'Content-Type': 'application/json',
@@ -265,8 +302,10 @@ class BonAppetitApiService {
     return null;
   }
 
-  Future<String?> postCreateMenuSectionProduct(String menuId, String sectionId, DProduct product) async {
-    var url = Uri.parse("${Apis.baseUrl}/Menu/$menuId/Section/$sectionId/Product");
+  Future<String?> postCreateMenuSectionProduct(
+      String menuId, String sectionId, DProduct product) async {
+    var url =
+        Uri.parse("${Apis.baseUrl}/Menu/$menuId/Section/$sectionId/Product");
     var headers = <String, String>{
       'Content-Type': 'application/json',
     };
@@ -289,8 +328,10 @@ class BonAppetitApiService {
     return null;
   }
 
-  Future<String?> deleteMenuSectionProduct(String menuId, String sectionId, String productId) async {
-    var url = Uri.parse("${Apis.baseUrl}/Menu/$menuId/Section/$sectionId/Product/$productId");
+  Future<String?> deleteMenuSectionProduct(
+      String menuId, String sectionId, String productId) async {
+    var url = Uri.parse(
+        "${Apis.baseUrl}/Menu/$menuId/Section/$sectionId/Product/$productId");
     var headers = <String, String>{
       'Content-Type': 'application/json',
     };

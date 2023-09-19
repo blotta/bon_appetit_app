@@ -7,6 +7,7 @@ class AuthState {
   String? token;
   String? id;
   String name = "Anônimo";
+  String role = "Anonymous";
 }
 
 class AuthNotifier extends StateNotifier<AuthState> {
@@ -18,27 +19,29 @@ class AuthNotifier extends StateNotifier<AuthState> {
 
   Future loginWithEmailAndPassword(String email, String password) async {
     try {
-      var token = await BonAppetitApiService().postLoginWithEmailAndPassword(email, password);
+      var response = await BonAppetitApiService().postLoginWithEmailAndPassword(email, password);
       var s = AuthState();
       s.loggedIn = true;
-      s.token = token;
-      s.id = token;
-      s.name = "Autenticado";
-      state = s;
+      s.token = response.token;
+      s.id = response.id;
 
-      // var decoded = JwtDecoder.decode(token);
-      // print(decoded);
+      var decoded = JwtDecoder.decode(response.token);
+
+      s.name = decoded['unique_name'];
+      s.role = decoded['role'];
+
+      state = s;
     } catch (e) {
       throw Exception('Erro ao realizar o login');
     }
   }
 
-  Future<bool> registerWithEmailAndPassword(String email, String password) async {
+  Future<bool> registerWithEmailAndPassword(String name, String email, String password) async {
     try {
-      var success = await BonAppetitApiService().postRegisterWithEmailAndPassword(email, password);
-      return success;
+      await BonAppetitApiService().postRegisterWithEmailAndPassword(name, email, password);
+      return true;
     } catch (e) {
-      throw Exception('Erro ao realizar o registro');
+      throw Exception('Erro ao registrar usuário');
     }
   }
 

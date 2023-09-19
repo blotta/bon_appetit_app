@@ -1,6 +1,7 @@
 import 'dart:async';
 
 import 'package:bon_appetit_app/providers/auth_provider.dart';
+import 'package:bon_appetit_app/utils/info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -15,6 +16,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _loginFormKey = GlobalKey<FormState>();
   final _registerFormKey = GlobalKey<FormState>();
 
+  final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
 
@@ -29,12 +31,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
         _loading = true;
       });
       await ref.read(authProvider.notifier).loginWithEmailAndPassword(
-          _emailController.text, _passwordController.text);
+            _emailController.text,
+            _passwordController.text,
+          );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.redAccent,
-          behavior: SnackBarBehavior.floating,
-          content: Text(e.toString())));
+      showErrorSnackbar(context, "Erro ao realizar o login");
     } finally {
       setState(() {
         _loading = false;
@@ -47,18 +48,21 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       setState(() {
         _loading = true;
       });
-      var success = await ref.read(authProvider.notifier).registerWithEmailAndPassword(
-          _emailController.text, _passwordController.text);
+      var success =
+          await ref.read(authProvider.notifier).registerWithEmailAndPassword(
+                _nameController.text,
+                _emailController.text,
+                _passwordController.text,
+              );
       if (!success) {
         throw Exception('Erro ao registrar');
       }
       await ref.read(authProvider.notifier).loginWithEmailAndPassword(
-          _emailController.text, _passwordController.text);
+            _emailController.text,
+            _passwordController.text,
+          );
     } catch (e) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          backgroundColor: Colors.redAccent,
-          behavior: SnackBarBehavior.floating,
-          content: Text(e.toString())));
+      showErrorSnackbar(context, "Erro ao registrar usuário");
     } finally {
       setState(() {
         _loading = false;
@@ -72,6 +76,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
 
   @override
   void dispose() {
+    _nameController.dispose();
     _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
@@ -179,6 +184,20 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             style: Theme.of(context).textTheme.headlineMedium,
           ),
           const SizedBox(height: 20.0),
+          TextFormField(
+            controller: _nameController,
+            keyboardType: TextInputType.emailAddress,
+            decoration: const InputDecoration(
+              label: Text('nome'),
+              hintText: 'nome',
+            ),
+            validator: (value) {
+              if (value == null || value.isEmpty) {
+                return 'Digite seu nome';
+              }
+              return null;
+            },
+          ),
           TextFormField(
             controller: _emailController,
             keyboardType: TextInputType.emailAddress,
