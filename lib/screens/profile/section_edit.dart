@@ -1,12 +1,14 @@
-import 'package:bon_appetit_app/models/menu.dart';
-import 'package:bon_appetit_app/screens/profile/item_edit.dart';
+import 'package:bon_appetit_app/models/discovery_restaurant.dart';
+import 'package:bon_appetit_app/screens/profile/product_edit.dart';
 import 'package:bon_appetit_app/screens/profile/items.dart';
 import 'package:flutter/material.dart';
 
 class SectionEditScreen extends StatefulWidget {
-  const SectionEditScreen({super.key, required this.section});
+  const SectionEditScreen(
+      {super.key, required this.section, required this.menuId});
 
-  final MenuSection section;
+  final String menuId;
+  final DMenuSection section;
 
   @override
   State<SectionEditScreen> createState() => _SectionEditScreenState();
@@ -15,7 +17,7 @@ class SectionEditScreen extends StatefulWidget {
 class _SectionEditScreenState extends State<SectionEditScreen> {
   final _formKey = GlobalKey<FormState>();
   var _enteredName = '';
-  List<MenuItem> _sectionItems = [];
+  List<DProduct> _sectionProducts = [];
 
   @override
   void initState() {
@@ -23,7 +25,7 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
 
     setState(() {
       _enteredName = widget.section.name;
-      _sectionItems = widget.section.items;
+      _sectionProducts = widget.section.products;
     });
   }
 
@@ -36,23 +38,33 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
   }
 
   void navigateToItemsScreenAndGetItem() async {
-    var newItem = await Navigator.of(context).push<MenuItem>(MaterialPageRoute(
-        builder: (ctx) => const ItemsScreen(returnItemBehaviour: true)));
+    var newProduct = await Navigator.of(context).push<DProduct>(
+        MaterialPageRoute(
+            builder: (ctx) => const ItemsScreen(returnItemBehaviour: true)));
 
-    if (newItem != null && !_sectionItems.any((i) => i.name == newItem.name)) {
+    if (newProduct != null &&
+        !_sectionProducts.any((i) => i.name == newProduct.name)) {
       setState(() {
-        _sectionItems.add(newItem);
+        _sectionProducts.add(newProduct);
       });
     }
   }
 
-  navigateToItemEditScreen(MenuItem? item) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (ctx) => ItemEditScreen(item: item)));
+  navigateToItemEditScreen(DProduct? product) async {
+    var newProduct = await Navigator.of(context).push<DProduct?>(MaterialPageRoute(
+        builder: (ctx) => ProductEditScreen(
+            menuId: widget.menuId,
+            sectionId: widget.section.id,
+            product: product)));
+    if (newProduct != null) {
+      setState(() {
+        _sectionProducts.add(newProduct);
+      });
+    }
   }
 
-  void removeItem(MenuItem item) {
-    _sectionItems.remove(item);
+  void removeItem(DProduct item) {
+    _sectionProducts.remove(item);
   }
 
   @override
@@ -76,6 +88,7 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                     children: [
                       TextFormField(
                         initialValue: _enteredName,
+                        readOnly: true,
                         maxLength: 50,
                         decoration: const InputDecoration(label: Text('Nome')),
                       ),
@@ -88,7 +101,8 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           IconButton(
-                            onPressed: navigateToItemsScreenAndGetItem,
+                            onPressed: () => navigateToItemEditScreen(
+                                null),
                             icon: const Icon(Icons.add_box, size: 30),
                             color: Theme.of(context).colorScheme.surface,
                           ),
@@ -98,10 +112,10 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                         shrinkWrap: true,
                         primary: false, // play nice with scrolling
                         buildDefaultDragHandles: false,
-                        itemCount: _sectionItems.length,
+                        itemCount: _sectionProducts.length,
                         itemBuilder: (context, index) {
                           return Dismissible(
-                            key: Key(_sectionItems[index].name),
+                            key: Key(_sectionProducts[index].name),
                             background: Container(
                               alignment: Alignment.centerLeft,
                               decoration: const BoxDecoration(
@@ -124,15 +138,15 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                             ),
                             confirmDismiss: (direction) async {
                               if (direction == DismissDirection.startToEnd) {
-                                removeItem(_sectionItems[index]);
+                                removeItem(_sectionProducts[index]);
                                 return true;
                               }
                               return false;
                             },
                             child: ListTile(
                               onTap: () => navigateToItemEditScreen(
-                                  _sectionItems[index]),
-                              title: Text(_sectionItems[index].name),
+                                  _sectionProducts[index]),
+                              title: Text(_sectionProducts[index].name),
                               trailing: const Icon(Icons.arrow_right_alt),
                               leading: ReorderableDragStartListener(
                                 index: index,
@@ -149,8 +163,8 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                             if (oldIndex < newIndex) {
                               newIndex -= 1;
                             }
-                            final item = _sectionItems.removeAt(oldIndex);
-                            _sectionItems.insert(newIndex, item);
+                            final item = _sectionProducts.removeAt(oldIndex);
+                            _sectionProducts.insert(newIndex, item);
                           });
                         },
                       ),

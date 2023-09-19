@@ -73,9 +73,9 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
 
   @override
   Widget build(BuildContext context) {
-    void navigateToSectionEdit(MenuSection section) {
+    void navigateToSectionEdit(DMenuSection section) {
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (ctx) => SectionEditScreen(section: section)));
+          builder: (ctx) => SectionEditScreen(menuId: widget.menu.id, section: section)));
     }
 
     return Scaffold(
@@ -97,6 +97,7 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                       children: [
                         TextFormField(
                           initialValue: _enteredName,
+                          readOnly: true,
                           maxLength: 50,
                           decoration:
                               const InputDecoration(label: Text('Nome')),
@@ -157,7 +158,7 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                               },
                               child: ListTile(
                                 onTap: () {
-                                  // navigateToSectionEdit(_menuSections[index])
+                                  navigateToSectionEdit(_menuSections[index]);
                                 },
                                 title: Text(_menuSections[index].name),
                                 trailing: const Icon(Icons.arrow_right_alt),
@@ -187,7 +188,6 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                           width: double.infinity,
                           child: ElevatedButton(
                             onPressed: () async {
-                              // var secName = await newSectionDialog(context);
                               var secName = await getStringDialog(
                                   context,
                                   _newSectionNameController,
@@ -200,17 +200,6 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                                 await _createSection(secName);
                                 Navigator.of(context).pop();
                               }
-                              // String baseName = "Nova seção";
-                              // String name = baseName;
-                              // int counter = 1;
-                              // while (_menuSections
-                              //     .any((sec) => sec.name == name)) {
-                              //   name = '$baseName $counter';
-                              //   counter++;
-                              // }
-                              // setState(() {
-                              // _menuSections.add(MenuSection(name, []));
-                              // });
                             },
                             style: ElevatedButton.styleFrom(
                                 backgroundColor:

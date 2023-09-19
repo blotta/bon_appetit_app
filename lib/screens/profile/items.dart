@@ -1,6 +1,6 @@
 import 'package:bon_appetit_app/data/dummy_data.dart';
 import 'package:bon_appetit_app/models/menu.dart';
-import 'package:bon_appetit_app/screens/profile/item_edit.dart';
+import 'package:bon_appetit_app/screens/profile/product_edit.dart';
 import 'package:flutter/material.dart';
 
 class ItemsScreen extends StatefulWidget {
@@ -25,8 +25,8 @@ class _ItemsScreenState extends State<ItemsScreen> {
   }
 
   void navigateToItemEditScreen(MenuItem? item) {
-    Navigator.of(context)
-        .push(MaterialPageRoute(builder: (ctx) => ItemEditScreen(item: item)));
+    // Navigator.of(context)
+    //     .push(MaterialPageRoute(builder: (ctx) => ItemEditScreen(item: item)));
   }
 
   void _search() {
