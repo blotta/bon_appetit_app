@@ -34,7 +34,6 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     }
 
     return Scaffold(
-      // appBar: AppBar(title: const Text('Bon Appetit')),
       body: activePage,
       bottomNavigationBar: BottomNavigationBar(
         onTap: _selectPage,

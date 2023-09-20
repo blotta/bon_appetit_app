@@ -1,5 +1,7 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
-import 'package:bon_appetit_app/screens/menu/item_details.dart';
+import 'package:bon_appetit_app/providers/auth_provider.dart';
+import 'package:bon_appetit_app/providers/comanda.dart';
+import 'package:bon_appetit_app/providers/menupreselect.dart';
 import 'package:bon_appetit_app/screens/menu/purchase.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:bon_appetit_app/widgets/menu/item_list.dart';
@@ -27,22 +29,11 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
     });
   }
 
-  void _selectItem(DProduct item) {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (ctx) => ItemDetails(item: item)));
-  }
-
-  void _purchaseResume() {
+  void navigateToPurchaseResume() {
     Navigator.push(
         context,
         MaterialPageRoute(
             builder: (ctx) => Purchase(restaurantId: widget.restaurantId)));
-  }
-
-  @override
-  void initState() {
-    super.initState();
-    _getData();
   }
 
   void _getData() async {
@@ -51,12 +42,50 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
     setState(() {
       _restaurant = r;
       _menu = _restaurant!.menu;
-      _activeSection = (_menu == null || _menu!.sections.isEmpty) ? null : _menu?.sections.first;
+      _activeSection = (_menu == null || _menu!.sections.isEmpty)
+          ? null
+          : _menu?.sections.first;
     });
   }
 
   @override
+  void initState() {
+    super.initState();
+    _getData();
+  }
+
+  @override
   Widget build(BuildContext context) {
+    var auth = ref.watch(authProvider);
+    var comanda = ref.watch(comandaProvider);
+    var menuPreselectItems = ref.watch(menuPreselectProvider);
+
+    var menuPreselectItemsCount = menuPreselectItems.fold(
+        0, (previousValue, element) => previousValue + element.quantity);
+    var comandaCount = comanda.items
+        .fold(0, (previousValue, element) => previousValue + element.quantity);
+    var itemCount =
+        menuPreselectItemsCount > 0 ? menuPreselectItemsCount : comandaCount;
+
+    List<Widget> appBarActions = [];
+    if (auth.loggedIn) {
+      appBarActions.add(
+        Badge(
+          label: Text(itemCount.toString()),
+          isLabelVisible: itemCount > 0,
+          alignment: Alignment.bottomLeft,
+          backgroundColor: Colors.white,
+          textColor: Theme.of(context).colorScheme.surface,
+          child: IconButton(
+            onPressed: navigateToPurchaseResume,
+            icon: const Icon(
+              Icons.receipt,
+              color: Colors.white,
+            ),
+          ),
+        ),
+      );
+    }
     if (_restaurant == null) {
       return Scaffold(
         appBar: AppBar(
@@ -103,15 +132,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
               .titleLarge!
               .copyWith(color: Theme.of(context).colorScheme.onPrimary),
         ),
-        actions: [
-          IconButton(
-            onPressed: _purchaseResume,
-            icon: const Icon(
-              Icons.receipt,
-              color: Colors.white,
-            ),
-          )
-        ],
+        actions: appBarActions,
       ),
       body: Column(
         children: [
@@ -144,8 +165,8 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
             child: Padding(
               padding: const EdgeInsets.all(8.0),
               child: ItemList(
+                restaurantId: widget.restaurantId,
                 items: _activeSection!.products,
-                onSelectItem: _selectItem,
               ),
             ),
           )

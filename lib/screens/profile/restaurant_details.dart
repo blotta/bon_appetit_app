@@ -1,5 +1,4 @@
 import 'package:bon_appetit_app/models/partner_models.dart';
-import 'package:bon_appetit_app/screens/profile/items.dart';
 import 'package:bon_appetit_app/screens/profile/menus.dart';
 import 'package:bon_appetit_app/screens/profile/orders.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_edit.dart';
@@ -19,7 +18,7 @@ class RestaurantDetailsScreen extends StatefulWidget {
 }
 
 class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
-  PartnerRestaurant? _restaurant = null;
+  PartnerRestaurant? _restaurant;
   bool restaurantEnable = false;
 
   @override
@@ -56,11 +55,6 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
           builder: (ctx) => MenusScreen(restaurantId: widget.restaurantId)));
     }
 
-    void navigateToItemsScreen() {
-      Navigator.of(context)
-          .push(MaterialPageRoute(builder: (ctx) => const ItemsScreen()));
-    }
-
     void navigateToOrdersScreen() {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (ctx) => OrdersScreen(restaurantId: widget.restaurantId)));
@@ -81,13 +75,15 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
         success = await BonAppetitApiService()
             .patchPartnerDeactivate(widget.restaurantId);
       }
-      Navigator.of(context).pop(); // loadingDialog
+      if (context.mounted) {
+        Navigator.of(context).pop(); // loadingDialog
 
-      if (!success) {
-        showErrorSnackbar(context, "Não foi possível realizar a operação");
-        setState(() {
-          restaurantEnable = !restaurantEnable;
-        });
+        if (!success) {
+          showErrorSnackbar(context, "Não foi possível realizar a operação");
+          setState(() {
+            restaurantEnable = !restaurantEnable;
+          });
+        }
       }
 
       return success;

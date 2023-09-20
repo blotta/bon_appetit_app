@@ -53,11 +53,12 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
   }
 
   navigateToItemEditScreen(DProduct? product) async {
-    var newProduct = await Navigator.of(context).push<DProduct?>(MaterialPageRoute(
-        builder: (ctx) => ProductEditScreen(
-            menuId: widget.menuId,
-            sectionId: widget.section.id,
-            product: product)));
+    var newProduct = await Navigator.of(context).push<DProduct?>(
+        MaterialPageRoute(
+            builder: (ctx) => ProductEditScreen(
+                menuId: widget.menuId,
+                sectionId: widget.section.id,
+                product: product)));
     if (newProduct != null) {
       setState(() {
         _sectionProducts.add(newProduct);
@@ -66,12 +67,15 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
   }
 
   Future<bool> deleteProduct(DProduct product) async {
-    var prodId = await BonAppetitApiService().deleteMenuSectionProduct(widget.menuId, widget.section.id, product.id);
+    var prodId = await BonAppetitApiService()
+        .deleteMenuSectionProduct(widget.menuId, widget.section.id, product.id);
     if (prodId != null) {
       _sectionProducts.remove(product);
       return true;
     }
-    showErrorSnackbar(context, "Erro ao deletar produto");
+    if (context.mounted) {
+      showErrorSnackbar(context, "Erro ao deletar produto");
+    }
     return false;
   }
 
@@ -109,8 +113,7 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                             style: Theme.of(context).textTheme.titleLarge,
                           ),
                           IconButton(
-                            onPressed: () => navigateToItemEditScreen(
-                                null),
+                            onPressed: () => navigateToItemEditScreen(null),
                             icon: const Icon(Icons.add_box, size: 30),
                             color: Theme.of(context).colorScheme.surface,
                           ),
@@ -146,7 +149,8 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
                             ),
                             confirmDismiss: (direction) async {
                               if (direction == DismissDirection.startToEnd) {
-                                var success = deleteProduct(_sectionProducts[index]);
+                                var success =
+                                    deleteProduct(_sectionProducts[index]);
                                 return success;
                               }
                               return false;

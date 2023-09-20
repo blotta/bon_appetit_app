@@ -264,7 +264,7 @@ class BonAppetitApiService {
   }
 
   Future<List<DMenu>> getPartnerMenus(String restaurantId) async {
-    var rest = await this.getDiscoveryRestaurant(restaurantId);
+    var rest = await getDiscoveryRestaurant(restaurantId);
     if (rest.menu == null) {
       return [];
     }
@@ -272,7 +272,7 @@ class BonAppetitApiService {
   }
 
   Future<DMenu?> getPartnerMenu(String restaurantId, String menuId) async {
-    var rest = await this.getDiscoveryRestaurant(restaurantId);
+    var rest = await getDiscoveryRestaurant(restaurantId);
     if (menuId == rest.menu!.id) {
       return rest.menu!;
     }

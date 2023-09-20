@@ -14,17 +14,12 @@ class MenuNewScreen extends StatefulWidget {
 
 class _MenuNewScreenState extends State<MenuNewScreen> {
   final _formKey = GlobalKey<FormState>();
-  var _enteredName = TextEditingController();
-  var _enteredDescription = TextEditingController();
+  final _enteredName = TextEditingController();
+  final _enteredDescription = TextEditingController();
 
   @override
   void initState() {
     super.initState();
-
-    // setState(() {
-    //   _enteredName = widget.menu?.name ?? '';
-    //   _menuSections = widget.menu?.sections ?? [];
-    // });
   }
 
   @override
@@ -46,8 +41,10 @@ class _MenuNewScreenState extends State<MenuNewScreen> {
       if (menuId != null) {
         var newMenu = await BonAppetitApiService()
             .getPartnerMenu(widget.restaurantId, menuId);
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (ctx) => MenuEditScreen(menu: newMenu!)));
+        if (context.mounted) {
+          Navigator.of(context).pushReplacement(MaterialPageRoute(
+              builder: (ctx) => MenuEditScreen(menu: newMenu!)));
+        }
       }
     }
   }

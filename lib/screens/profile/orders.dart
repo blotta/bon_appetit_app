@@ -78,7 +78,7 @@ class OrdersScreen extends StatelessWidget {
                                     "#${snapshot.data![index].number.toString()}",
                                     style: Theme.of(context)
                                         .textTheme
-                                        .titleMedium!
+                                        .titleLarge!
                                         .copyWith(fontWeight: FontWeight.bold),
                                   ),
                                   getOrderStatus(snapshot.data![index])

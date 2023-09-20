@@ -62,10 +62,14 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
           var success = await _uploadProductImage(
               widget.product!.id, await pickedImage!.readAsBytes());
           if (!success) {
-            showErrorSnackbar(context, "Erro ao enviar imagem");
+            if (context.mounted) {
+              showErrorSnackbar(context, "Erro ao enviar imagem");
+            }
           }
         }
-        Navigator.of(context).pop();
+        if (context.mounted) {
+          Navigator.of(context).pop();
+        }
         return;
       } else {
         // new
@@ -80,23 +84,32 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
         var newProductId = await BonAppetitApiService()
             .postCreateMenuSectionProduct(
                 widget.menuId, widget.sectionId, product);
-        Navigator.of(context).pop(); // loadingDialog
+        if (context.mounted) {
+          Navigator.of(context).pop(); // loadingDialog
+        }
         if (newProductId != null) {
           if (pickedImage != null) {
             var pngBytes = await pickedImage!.readAsBytes();
             var success = await _uploadProductImage(newProductId, pngBytes);
             if (!success) {
-              showErrorSnackbar(context, "Erro ao enviar imagem");
+              if (context.mounted) {
+                showErrorSnackbar(context, "Erro ao enviar imagem");
+              }
             }
           }
 
           var newProduct = DProduct(newProductId, _enteredName.text,
               _enteredDescription.text, double.parse(_enteredPrice.text), null);
-          Navigator.of(context).pop<DProduct>(newProduct);
+          if (context.mounted) {
+            Navigator.of(context).pop<DProduct>(newProduct);
+          }
+
           return;
         }
       }
-      showErrorSnackbar(context, "Erro ao salvar produto");
+      if (context.mounted) {
+        showErrorSnackbar(context, "Erro ao salvar produto");
+      }
     }
   }
 

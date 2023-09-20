@@ -1,6 +1,5 @@
 import 'package:bon_appetit_app/data/dummy_data.dart';
 import 'package:bon_appetit_app/models/menu.dart';
-import 'package:bon_appetit_app/screens/profile/product_edit.dart';
 import 'package:flutter/material.dart';
 
 class ItemsScreen extends StatefulWidget {

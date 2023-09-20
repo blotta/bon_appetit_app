@@ -12,6 +12,11 @@ class InitialScreen extends StatefulWidget {
 }
 
 class _InitialScreenState extends State<InitialScreen> {
+  Future<List<DiscoveryRestaurant>> _getRestaurants() async {
+    var restaurants = await BonAppetitApiService().getDiscoveryRestaurants();
+    return restaurants;
+  }
+
   void _selectRestaurant(String restaurantId) {
     Navigator.push(
         context,
@@ -23,7 +28,6 @@ class _InitialScreenState extends State<InitialScreen> {
   Widget build(BuildContext context) {
     return Center(
       child: Column(
-        // mainAxisAlignment: MainAxisAlignment.center,
         children: [
           const SizedBox(height: 60),
           Image.asset('images/bonappetit_logo.png'),
@@ -38,35 +42,56 @@ class _InitialScreenState extends State<InitialScreen> {
             'Restaurantes Disponíveis',
             style: Theme.of(context).textTheme.headlineSmall,
           ),
-          FutureBuilder<List<DiscoveryRestaurant>>(
-            future: BonAppetitApiService().getDiscoveryRestaurants(),
-            builder: (context, snapshot) {
-              if (snapshot.hasError) {
+          Expanded(
+            child: FutureBuilder<List<DiscoveryRestaurant>>(
+              future: _getRestaurants(),
+              builder: (context, snapshot) {
+                if (snapshot.hasError) {
+                  return Center(
+                    child: Column(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        Text("Erro ao carregar restaurantes",
+                            style: Theme.of(context).textTheme.bodyLarge),
+                        const SizedBox(height: 20),
+                        IconButton(
+                          onPressed: () {
+                            setState(() {});
+                          },
+                          icon: const Icon(Icons.refresh, size: 40),
+                        ),
+                      ],
+                    ),
+                  );
+                }
+
+                if (snapshot.hasData &&
+                    snapshot.connectionState == ConnectionState.done) {
+                  return RefreshIndicator(
+                    onRefresh: () {
+                      return Future(() {
+                        setState(() {});
+                      });
+                    },
+                    child: ListView.builder(
+                        shrinkWrap: true,
+                        itemCount: snapshot.data!.length,
+                        itemBuilder: (context, index) {
+                          return Padding(
+                            padding: const EdgeInsets.all(8.0),
+                            child: RestaurantListItem(
+                                restaurant: snapshot.data![index],
+                                onSelectRestaurant: _selectRestaurant),
+                          );
+                        }),
+                  );
+                }
+
                 return const Center(
-                  child: Text("Erro ao carregar restaurantes"),
+                  child: CircularProgressIndicator(),
                 );
-              }
-
-              if (snapshot.hasData) {
-                return Expanded(
-                  child: ListView.builder(
-                      shrinkWrap: true,
-                      itemCount: snapshot.data!.length,
-                      itemBuilder: (context, index) {
-                        return Padding(
-                          padding: const EdgeInsets.all(8.0),
-                          child: RestaurantListItem(
-                              restaurant: snapshot.data![index],
-                              onSelectRestaurant: _selectRestaurant),
-                        );
-                      }),
-                );
-              }
-
-              return const Center(
-                child: CircularProgressIndicator(),
-              );
-            },
+              },
+            ),
           )
         ],
       ),

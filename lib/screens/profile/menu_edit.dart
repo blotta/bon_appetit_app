@@ -1,5 +1,4 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
-import 'package:bon_appetit_app/models/menu.dart';
 import 'package:bon_appetit_app/screens/profile/section_edit.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:bon_appetit_app/utils/info.dart';
@@ -75,7 +74,8 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
   Widget build(BuildContext context) {
     void navigateToSectionEdit(DMenuSection section) {
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (ctx) => SectionEditScreen(menuId: widget.menu.id, section: section)));
+          builder: (ctx) =>
+              SectionEditScreen(menuId: widget.menu.id, section: section)));
     }
 
     return Scaffold(
@@ -140,12 +140,14 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                                   bool excludeSection = await confirmDialog(
                                       context, "Deseja mesmo excluir a seção?",
                                       yesText: "Sim, excluir");
+                                  if (!context.mounted) return false;
                                   if (excludeSection) {
                                     // _deleteSection(_menuSections[index]);
                                     loadingDialog(
                                         context, "Excluindo seção...");
                                     var success = await _deleteSection(
                                         _menuSections[index].id);
+                                    if (!context.mounted) return false;
                                     Navigator.of(context).pop();
                                     if (!success) {
                                       showErrorSnackbar(context,
@@ -155,6 +157,7 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                                   }
                                   return excludeSection;
                                 }
+                                return false;
                               },
                               child: ListTile(
                                 onTap: () {
@@ -194,11 +197,14 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
                                   _newSectionFormKey,
                                   "Nova Seção",
                                   "Nome da seção");
-                              print(secName);
                               if (secName != null) {
-                                loadingDialog(context, null);
+                                if (context.mounted) {
+                                  loadingDialog(context, null);
+                                }
                                 await _createSection(secName);
-                                Navigator.of(context).pop();
+                                if (context.mounted) {
+                                  Navigator.of(context).pop();
+                                }
                               }
                             },
                             style: ElevatedButton.styleFrom(

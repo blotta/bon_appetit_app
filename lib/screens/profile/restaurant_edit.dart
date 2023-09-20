@@ -14,7 +14,7 @@ class RestaurantEditScreen extends StatefulWidget {
 
 class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
   final _formKey = GlobalKey<FormState>();
-  String? restaurantId = null;
+  String? restaurantId;
   var _enteredName = '';
   var _enteredSpecialty = '';
   var _enteredDescription = '';
@@ -56,23 +56,35 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
     if (_formKey.currentState!.validate()) {
       _formKey.currentState!.save();
 
-        var address = Address(_enteredCountry, _enteredState, _enteredCity, _enteredDistrict, _enteredStreet, _enteredStreetNumber, _enteredZipCode);
-        var partner = PartnerRestaurant(
-            "", _enteredName, _enteredDescription, _enteredSpecialty, _enteredPhoneNumber, true, address);
+      var address = Address(
+          _enteredCountry,
+          _enteredState,
+          _enteredCity,
+          _enteredDistrict,
+          _enteredStreet,
+          _enteredStreetNumber,
+          _enteredZipCode);
+      var partner = PartnerRestaurant("", _enteredName, _enteredDescription,
+          _enteredSpecialty, _enteredPhoneNumber, true, address);
 
       if (restaurantId != null) {
         // edit
-        var result = await BonAppetitApiService().putUpdatePartner(restaurantId!, partner);
+        var result = await BonAppetitApiService()
+            .putUpdatePartner(restaurantId!, partner);
         if (result) {
-          Navigator.of(context).pop(true);
+          if (context.mounted) {
+            Navigator.of(context).pop(true);
+          }
         }
-        // Navigator.of(context).pop();
       } else {
         // new
         var partnerId = await BonAppetitApiService().postCreatePartner(partner);
         if (partnerId != null) {
-          Navigator.of(context).pushReplacement(MaterialPageRoute(
-              builder: (ctx) => RestaurantDetailsScreen(restaurantId: partnerId)));
+          if (context.mounted) {
+            Navigator.of(context).pushReplacement(MaterialPageRoute(
+                builder: (ctx) =>
+                    RestaurantDetailsScreen(restaurantId: partnerId)));
+          }
         }
       }
     }
@@ -117,7 +129,9 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
                       DropdownButtonFormField(
                         decoration:
                             const InputDecoration(label: Text('Especialidade')),
-                        value: specialties.containsValue(_enteredSpecialty) ? _enteredSpecialty : specialties.entries.first.value,
+                        value: specialties.containsValue(_enteredSpecialty)
+                            ? _enteredSpecialty
+                            : specialties.entries.first.value,
                         items: specialties.entries
                             .map((e) => DropdownMenuItem<String>(
                                 value: e.value, child: Text(e.key)))
@@ -150,7 +164,6 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
                           _enteredPhoneNumber = value!;
                         },
                       ),
-
                       TextFormField(
                         initialValue: _enteredStreet,
                         maxLength: 100,

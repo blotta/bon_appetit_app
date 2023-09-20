@@ -30,7 +30,8 @@ class Purchase extends ConsumerWidget {
         const SnackBar(content: Text('Enviando pedido...')),
       );
 
-      var orderNumber = await BonAppetitApiService().postMakeOrder(restaurantId, menuPreselect);
+      var orderNumber = await BonAppetitApiService()
+          .postMakeOrder(restaurantId, menuPreselect);
 
       var msg = "Erro ao realizar pedido";
       if (orderNumber >= 0) {
@@ -40,19 +41,23 @@ class Purchase extends ConsumerWidget {
         msg = "Pedido realizado!";
       }
 
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text(msg)),
-      );
+      if (context.mounted) {
+        ScaffoldMessenger.of(context).clearSnackBars();
+        ScaffoldMessenger.of(context).showSnackBar(
+          SnackBar(content: Text(msg)),
+        );
+      }
     }
 
     void makePayment() async {
       var creditCard = await Navigator.of(context).push<CreditCard?>(
-          MaterialPageRoute(builder: (ctx) => CreditCardScreen()));
+          MaterialPageRoute(builder: (ctx) => const CreditCardScreen()));
 
       if (creditCard != null) {
-        Navigator.of(context).pushReplacement(
-            MaterialPageRoute(builder: (ctx) => PaymentScreen()));
+        if (context.mounted) {
+          Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (ctx) => const PaymentScreen()));
+        }
       }
     }
 
@@ -72,7 +77,6 @@ class Purchase extends ConsumerWidget {
             ),
             const SizedBox(height: 20),
             Row(
-              // mainAxisAlignment: MainAxisAlignment.end,
               mainAxisAlignment: MainAxisAlignment.spaceBetween,
               children: [
                 TextButton(
@@ -106,7 +110,7 @@ class Purchase extends ConsumerWidget {
               mainAxisAlignment: MainAxisAlignment.end,
               children: [
                 ElevatedButton(
-                  onPressed: makePayment,
+                  onPressed: comanda.items.isNotEmpty ? makePayment : null,
                   child: const Text(
                     'PAGAR',
                     style: TextStyle(

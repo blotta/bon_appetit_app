@@ -35,7 +35,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _passwordController.text,
           );
     } catch (e) {
-      showErrorSnackbar(context, "Erro ao realizar o login");
+      if (context.mounted) {
+        showErrorSnackbar(context, "Erro ao realizar o login");
+      }
     } finally {
       setState(() {
         _loading = false;
@@ -62,7 +64,9 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             _passwordController.text,
           );
     } catch (e) {
-      showErrorSnackbar(context, "Erro ao registrar usuário");
+      if (context.mounted) {
+        showErrorSnackbar(context, "Erro ao registrar usuário");
+      }
     } finally {
       setState(() {
         _loading = false;
@@ -293,81 +297,7 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
     return Scaffold(
       body: Center(
         child: SingleChildScrollView(
-            padding: const EdgeInsets.all(16.0), child: content
-            // Form(
-            //   key: _loginFormKey,
-            //   child: Column(
-            //       crossAxisAlignment: CrossAxisAlignment.stretch,
-            //       children: [
-            //         Text(
-            //           'Faça o login',
-            //           style: Theme.of(context).textTheme.headlineMedium,
-            //         ),
-            //         const SizedBox(height: 20.0),
-            //         TextFormField(
-            //           controller: _emailController,
-            //           keyboardType: TextInputType.emailAddress,
-            //           decoration: const InputDecoration(
-            //             label: Text('e-mail'),
-            //             hintText: 'nome@email.com',
-            //           ),
-            //           validator: (email) {
-            //             if (email == null || email.isEmpty) {
-            //               return 'Digite seu email';
-            //             }
-            //             return null;
-            //           },
-            //         ),
-            //         TextFormField(
-            //           controller: _passwordController,
-            //           obscureText: !_passVisible,
-            //           keyboardType: TextInputType.visiblePassword,
-            //           decoration: InputDecoration(
-            //             label: const Text('senha'),
-            //             hintText: 'Digite sua senha',
-            //             suffixIcon: IconButton(
-            //               icon: Icon(_passVisible
-            //                   ? Icons.visibility_off_outlined
-            //                   : Icons.visibility_outlined),
-            //               onPressed: () {
-            //                 setState(() {
-            //                   _passVisible = !_passVisible;
-            //                 });
-            //               },
-            //             ),
-            //           ),
-            //           validator: (senha) {
-            //             if (senha == null || senha.isEmpty) {
-            //               return 'Digite sua senha';
-            //             } else if (senha.length < 6) {
-            //               return 'Digite uma senha mais forte';
-            //             }
-            //             return null;
-            //           },
-            //         ),
-            //         const SizedBox(height: 30),
-            //         ElevatedButton(
-            //           onPressed: () {
-            //             if (_loginFormKey.currentState!.validate()) {
-            //               login();
-            //             }
-            //           },
-            //           child: Text('ENTRAR',
-            //               style: Theme.of(context)
-            //                   .textTheme
-            //                   .titleMedium!
-            //                   .copyWith(color: Colors.white)),
-            //         ),
-            //         Align(
-            //           alignment: Alignment.centerRight,
-            //           child: TextButton(
-            //             onPressed: () {},
-            //             child: Text('Registrar'),
-            //           ),
-            //         )
-            //       ]),
-            // ),
-            ),
+            padding: const EdgeInsets.all(16.0), child: content),
       ),
     );
   }

@@ -13,17 +13,17 @@ class ProfileScreen extends ConsumerWidget {
     var profile = ref.watch(authProvider);
     void navigateToRestaurants() {
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (ctx) => RestaurantsScreen()));
+          .push(MaterialPageRoute(builder: (ctx) => const RestaurantsScreen()));
     }
 
     void navigateToProfileEdit() {
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (ctx) => ProfileEditScreen()));
+          .push(MaterialPageRoute(builder: (ctx) => const ProfileEditScreen()));
     }
 
     void navigateToLoginScreen() {
       Navigator.of(context)
-          .push(MaterialPageRoute(builder: (ctx) => LoginScreen()));
+          .push(MaterialPageRoute(builder: (ctx) => const LoginScreen()));
     }
     
     List<Widget> profileOptions = [
