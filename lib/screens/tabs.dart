@@ -1,4 +1,6 @@
+import 'package:bon_appetit_app/screens/menu.dart';
 import 'package:bon_appetit_app/screens/profile.dart';
+import 'package:bon_appetit_app/screens/qr_scanner.dart';
 import 'package:flutter/material.dart';
 import 'package:bon_appetit_app/screens/initial.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -19,14 +21,26 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     });
   }
 
+  void navigateToRestaurantMenu(String restaurantId) {
+    Navigator.push(
+        context,
+        MaterialPageRoute(
+            builder: (ctx) => MenuScreen(restaurantId: restaurantId)));
+  }
+
+  void onQRCodeScanningDone(String code) {
+    setState(() {
+      _selectedPageIndex = 0;
+    });
+    navigateToRestaurantMenu(code);
+  }
+
   @override
   Widget build(BuildContext context) {
-
     Widget activePage = const InitialScreen();
 
     if (_selectedPageIndex == 1) {
-      // TODO: QR code screen
-      // activePage = const MenuScreen(restaurantId: '',);
+      activePage = QRScannerScreen(onScanningDone: onQRCodeScanningDone);
     }
 
     if (_selectedPageIndex == 2) {
@@ -45,7 +59,8 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
               icon: const Icon(Icons.qr_code),
               label: '',
               backgroundColor: Theme.of(context).colorScheme.primary),
-          const BottomNavigationBarItem(icon: Icon(Icons.person), label: 'Perfil'),
+          const BottomNavigationBarItem(
+              icon: Icon(Icons.person), label: 'Perfil'),
         ],
       ),
     );
