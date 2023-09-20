@@ -90,10 +90,10 @@ List<DOrder> ordersModelFromJson(String str) =>
         json.decode(str).map((x) => DOrder.fromJson(x)));
 
 class DOrder {
-  DOrder(this.number, this.date, this.canceled, this.total, this.itens);
+  DOrder(this.number, this.createdAt, this.canceled, this.total, this.itens);
 
   final int number;
-  final String date;
+  final DateTime createdAt;
   final bool canceled;
   final double total;
   final List<DOrderProduct> itens;
@@ -105,7 +105,7 @@ class DOrder {
     }
     return DOrder(
       json['number'],
-      json['date'],
+      DateTime.parse(json['createdAt']),
       json['canceled'],
       json['total'],
       itens,

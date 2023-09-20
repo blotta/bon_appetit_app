@@ -171,9 +171,6 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
             _restaurant!.description,
             style: Theme.of(context).textTheme.titleMedium,
           ),
-          Row(
-            children: [Text(_restaurant!.enable ? 'Ativo' : 'Inativo')],
-          ),
           const SizedBox(height: 30),
           Expanded(
             child: ListView(
@@ -186,7 +183,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                   onTap: navigateToMenusScreen,
                 ),
                 ListTile(
-                  title: const Text('Vendas'),
+                  title: const Text('Pedidos'),
                   leading: Icon(Icons.fastfood,
                       color: Theme.of(context).colorScheme.surface),
                   trailing: const Icon(Icons.arrow_right_alt, size: 40),
