@@ -1,8 +1,11 @@
 import 'package:bon_appetit_app/models/partner_models.dart';
 import 'package:bon_appetit_app/screens/profile/items.dart';
 import 'package:bon_appetit_app/screens/profile/menus.dart';
+import 'package:bon_appetit_app/screens/profile/orders.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_edit.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
+import 'package:bon_appetit_app/utils/info.dart';
+import 'package:bon_appetit_app/utils/input.dart';
 import 'package:flutter/material.dart';
 
 class RestaurantDetailsScreen extends StatefulWidget {
@@ -17,6 +20,7 @@ class RestaurantDetailsScreen extends StatefulWidget {
 
 class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
   PartnerRestaurant? _restaurant = null;
+  bool restaurantEnable = false;
 
   @override
   void initState() {
@@ -29,6 +33,7 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
         await BonAppetitApiService().getPartnerRestaurant(widget.restaurantId);
     setState(() {
       _restaurant = r;
+      restaurantEnable = r.enable;
     });
   }
 
@@ -54,6 +59,38 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
     void navigateToItemsScreen() {
       Navigator.of(context)
           .push(MaterialPageRoute(builder: (ctx) => const ItemsScreen()));
+    }
+
+    void navigateToOrdersScreen() {
+      Navigator.of(context).push(MaterialPageRoute(
+          builder: (ctx) => OrdersScreen(restaurantId: widget.restaurantId)));
+    }
+
+    Future<bool> toggleRestaurantActive(bool activating) async {
+      bool success = false;
+      setState(() {
+        restaurantEnable = activating;
+      });
+
+      if (activating) {
+        loadingDialog(context, "Ativando");
+        success = await BonAppetitApiService()
+            .patchPartnerActivate(widget.restaurantId);
+      } else {
+        loadingDialog(context, "Desativando");
+        success = await BonAppetitApiService()
+            .patchPartnerDeactivate(widget.restaurantId);
+      }
+      Navigator.of(context).pop(); // loadingDialog
+
+      if (!success) {
+        showErrorSnackbar(context, "Não foi possível realizar a operação");
+        setState(() {
+          restaurantEnable = !restaurantEnable;
+        });
+      }
+
+      return success;
     }
 
     if (_restaurant == null) {
@@ -82,13 +119,39 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
       body: Padding(
         padding: const EdgeInsets.all(20),
         child: Column(crossAxisAlignment: CrossAxisAlignment.start, children: [
-          Text(
-            'Nome',
-            style: Theme.of(context).textTheme.titleMedium,
-          ),
-          Text(
-            _restaurant!.title,
-            style: Theme.of(context).textTheme.headlineSmall,
+          Row(
+            mainAxisAlignment: MainAxisAlignment.spaceBetween,
+            children: [
+              Expanded(
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: [
+                    Text(
+                      'Nome',
+                      style: Theme.of(context).textTheme.titleMedium,
+                    ),
+                    Text(
+                      _restaurant!.title,
+                      style: Theme.of(context).textTheme.headlineSmall,
+                    ),
+                  ],
+                ),
+              ),
+              Column(
+                children: [
+                  Switch(
+                    value: restaurantEnable,
+                    activeColor: Colors.green,
+                    onChanged: toggleRestaurantActive,
+                  ),
+                  Text(
+                    restaurantEnable ? 'ATIVO' : 'INATIVO',
+                    style: Theme.of(context).textTheme.titleSmall,
+                  ),
+                ],
+              )
+            ],
           ),
           const SizedBox(height: 30),
           Text(
@@ -108,6 +171,9 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
             _restaurant!.description,
             style: Theme.of(context).textTheme.titleMedium,
           ),
+          Row(
+            children: [Text(_restaurant!.enable ? 'Ativo' : 'Inativo')],
+          ),
           const SizedBox(height: 30),
           Expanded(
             child: ListView(
@@ -118,6 +184,13 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
                       color: Theme.of(context).colorScheme.surface),
                   trailing: const Icon(Icons.arrow_right_alt, size: 40),
                   onTap: navigateToMenusScreen,
+                ),
+                ListTile(
+                  title: const Text('Vendas'),
+                  leading: Icon(Icons.fastfood,
+                      color: Theme.of(context).colorScheme.surface),
+                  trailing: const Icon(Icons.arrow_right_alt, size: 40),
+                  onTap: navigateToOrdersScreen,
                 ),
                 // ListTile(
                 //   title: const Text('Itens'),

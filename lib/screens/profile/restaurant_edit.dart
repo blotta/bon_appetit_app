@@ -58,7 +58,7 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
 
         var address = Address(_enteredCountry, _enteredState, _enteredCity, _enteredDistrict, _enteredStreet, _enteredStreetNumber, _enteredZipCode);
         var partner = PartnerRestaurant(
-            "", _enteredName, _enteredDescription, _enteredSpecialty, _enteredPhoneNumber, address);
+            "", _enteredName, _enteredDescription, _enteredSpecialty, _enteredPhoneNumber, true, address);
 
       if (restaurantId != null) {
         // edit

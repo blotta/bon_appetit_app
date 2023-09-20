@@ -1,4 +1,4 @@
-import 'package:bon_appetit_app/models/discovery_restaurant.dart';
+import 'package:bon_appetit_app/models/partner_models.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_details.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_edit.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
@@ -9,12 +9,12 @@ class RestaurantsScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    void navigateToRestaurantDetails(DiscoveryRestaurant r) {
+    void navigateToRestaurantDetails(String restaurantId) {
       Navigator.of(context).push(MaterialPageRoute(
-          builder: (ctx) => RestaurantDetailsScreen(restaurantId: r.id)));
+          builder: (ctx) => RestaurantDetailsScreen(restaurantId: restaurantId)));
     }
 
-    void navigateToRestaurantEdit(DiscoveryRestaurant? r) {
+    void navigateToRestaurantEdit() {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (ctx) => const RestaurantEditScreen(restaurant: null)));
     }
@@ -26,15 +26,15 @@ class RestaurantsScreen extends StatelessWidget {
         title: const Text('Meus Restaurantes'),
         actions: [
           IconButton(
-            onPressed: () => navigateToRestaurantEdit(null),
+            onPressed: () => navigateToRestaurantEdit(),
             icon: const Icon(Icons.add),
           )
         ],
       ),
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
-        child: FutureBuilder<List<DiscoveryRestaurant>>(
-          future: BonAppetitApiService().getDiscoveryRestaurants(),
+        child: FutureBuilder<List<BriefPartnerRestaurant>>(
+          future: BonAppetitApiService().getPartnerRestaurants(),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const Center(
@@ -49,7 +49,7 @@ class RestaurantsScreen extends StatelessWidget {
                   itemBuilder: (context, index) {
                     return ListTile(
                         onTap: () =>
-                            navigateToRestaurantDetails(snapshot.data![index]),
+                            navigateToRestaurantDetails(snapshot.data![index].id),
                         title: Text(snapshot.data![index].title),
                         trailing: const Icon(Icons.arrow_right_alt, size: 40));
                   });

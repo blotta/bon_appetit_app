@@ -47,7 +47,6 @@ class BonAppetitApiService {
 
   Future<BonAppetitLoginResponse> postLoginWithEmailAndPassword(
       String email, String password) async {
-
     var url = Uri.parse('${Apis.baseUrl}/User/Login');
     var headers = <String, String>{
       'Content-Type': 'application/json',
@@ -121,26 +120,43 @@ class BonAppetitApiService {
     return -1;
   }
 
-  // Future<int> getOrder(int orderNumber) async {
-  //   var url = Uri.parse("${Apis.baseUrl}/order/${orderNumber}");
+  Future<DOrder> getOrder(int orderNumber) async {
+    var url = Uri.parse("${Apis.baseUrl}/order/$orderNumber");
 
-  //   var response = await http.get(url);
+    var response = await http.get(url);
 
-  //   if (response.statusCode == 200) {
-  //     var orderNumber = json.decode(response.body)['data']['number'];
-  //     return orderNumber;
-  //   }
+    if (response.statusCode != 200) {
+      throw Exception('Error loading orders');
+    }
 
-  //   return -1;
-  // }
+    var jd = json.decode(response.body)['message'];
+    var order = DOrder.fromJson(jd);
+    return order;
+  }
 
-  Future<List<PartnerRestaurant>> getPartnerRestaurants() async {
+  Future<List<DOrder>> getRestaurantOrders(String restaurantId) async {
+    var url = Uri.parse("${Apis.baseUrl}/Order/Partner/$restaurantId");
+
+    var response = await http.get(url);
+
+    if (response.statusCode != 200) {
+      throw Exception('Error loading orders');
+    }
+
+    var jd = json.decode(response.body)['message'];
+    var str = json.encode(jd);
+    var orders = ordersModelFromJson(str);
+    return orders;
+  }
+
+  Future<List<BriefPartnerRestaurant>> getPartnerRestaurants() async {
     var url = Uri.parse("${Apis.baseUrl}/Partner");
     var response = await http.get(url);
     if (response.statusCode == 200) {
       var jd = json.decode(response.body)["message"];
       var str = json.encode(jd);
-      List<PartnerRestaurant> model = partnerRestaurantModelFromJson(str);
+      List<BriefPartnerRestaurant> model =
+          briefPartnerRestaurantModelFromJson(str);
       return model;
     } else {
       throw Exception('Error loading restaurants');
@@ -216,6 +232,30 @@ class BonAppetitApiService {
     var response = await http.put(url, headers: headers, body: content);
 
     if (response.statusCode == 200) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> patchPartnerActivate(String restaurantId) async {
+    var url = Uri.parse("${Apis.baseUrl}/Partner/Activate/$restaurantId");
+
+    var response = await http.patch(url);
+
+    if (response.statusCode < 400) {
+      return true;
+    }
+
+    return false;
+  }
+
+  Future<bool> patchPartnerDeactivate(String restaurantId) async {
+    var url = Uri.parse("${Apis.baseUrl}/Partner/Deactivate/$restaurantId");
+
+    var response = await http.patch(url);
+
+    if (response.statusCode < 400) {
       return true;
     }
 
