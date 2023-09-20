@@ -7,6 +7,7 @@ class AuthState {
   String? token;
   String? id;
   String name = "Anônimo";
+  String? email;
   String role = "Anonymous";
 }
 
@@ -28,6 +29,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
       var decoded = JwtDecoder.decode(response.token);
 
       s.name = decoded['unique_name'];
+      s.email = decoded['unique_name'];
       s.role = decoded['role'];
 
       state = s;
