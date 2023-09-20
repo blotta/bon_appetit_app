@@ -1,5 +1,7 @@
+import 'package:bon_appetit_app/models/payment.dart';
 import 'package:bon_appetit_app/providers/comanda.dart';
 import 'package:bon_appetit_app/providers/menupreselect.dart';
+import 'package:bon_appetit_app/screens/menu/creditcard.dart';
 import 'package:bon_appetit_app/screens/menu/payment.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:bon_appetit_app/widgets/menu/order_list.dart';
@@ -44,9 +46,14 @@ class Purchase extends ConsumerWidget {
       );
     }
 
-    void makePayment() {
-      Navigator.of(context).pushReplacement(
-          MaterialPageRoute(builder: (ctx) => PaymentScreen()));
+    void makePayment() async {
+      var creditCard = await Navigator.of(context).push<CreditCard?>(
+          MaterialPageRoute(builder: (ctx) => CreditCardScreen()));
+
+      if (creditCard != null) {
+        Navigator.of(context).pushReplacement(
+            MaterialPageRoute(builder: (ctx) => PaymentScreen()));
+      }
     }
 
     return Scaffold(
