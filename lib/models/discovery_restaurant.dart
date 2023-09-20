@@ -54,17 +54,19 @@ class DMenuSection {
 }
 
 class DProduct {
-  const DProduct(this.id, this.name, this.description, this.price);
+  const DProduct(this.id, this.name, this.description, this.price, this.imageUrl);
   final String id;
   final String name;
   final String description;
   final double price;
+  final String? imageUrl;
 
   factory DProduct.fromJson(Map<String, dynamic> json) => DProduct(
         json['id'],
         json['name'],
         json['description'],
         json['price'],
+        json['imageUrl'],
       );
 }
 

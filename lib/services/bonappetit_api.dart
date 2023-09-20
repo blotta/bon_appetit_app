@@ -1,4 +1,5 @@
 import 'dart:convert';
+import 'dart:typed_data';
 
 import 'package:bon_appetit_app/config/apis.dart';
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
@@ -366,6 +367,33 @@ class BonAppetitApiService {
     }
 
     return null;
+  }
+
+  Future<bool> uploadMenuSectionProductImage(String menuId, String sectionId,
+      String productId, Uint8List pngBytes) async {
+    var patchUrl = Uri.parse(
+        "${Apis.baseUrl}/Menu/$menuId/Section/$sectionId/Product/$productId");
+
+    var patchResponse = await http.patch(patchUrl);
+
+    if (patchResponse.statusCode == 200) {
+      var putUrl = Uri.parse(patchResponse.body);
+
+      var headers = {
+        'x-ms-blob-type': 'BlockBlob',
+        'Content-Type': 'image/png'
+      };
+
+      var body = pngBytes;
+
+      var putResponse = await http.put(putUrl, headers: headers, body: body);
+
+      if (putResponse.statusCode == 201) {
+        return true;
+      }
+    }
+
+    return false;
   }
 
   Future<String?> deleteMenuSectionProduct(

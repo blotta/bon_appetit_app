@@ -1,4 +1,5 @@
 import 'dart:io';
+import 'dart:typed_data';
 
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
@@ -38,11 +39,17 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
     if (widget.product != null) {
       setState(() {
         _enteredName.text = widget.product!.name;
-        // _enteredImageUrl = widget.item!.imageUrl;
         _enteredDescription.text = widget.product!.description;
         _enteredPrice.text = widget.product!.price.toStringAsFixed(2);
+        _enteredImageUrl.text = widget.product!.imageUrl ?? '';
       });
     }
+  }
+
+  Future<bool> _uploadProductImage(String productId, Uint8List pngBytes) async {
+    var success = await BonAppetitApiService().uploadMenuSectionProductImage(
+        widget.menuId, widget.sectionId, productId, pngBytes);
+    return success;
   }
 
   void _saveItem() async {
@@ -51,25 +58,40 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
 
       if (widget.product != null) {
         // edit
+        if (pickedImage != null) {
+          var success = await _uploadProductImage(
+              widget.product!.id, await pickedImage!.readAsBytes());
+          if (!success) {
+            showErrorSnackbar(context, "Erro ao enviar imagem");
+          }
+        }
         Navigator.of(context).pop();
         return;
       } else {
         // new
         var product = DProduct(
-          '',
-          _enteredName.text,
-          _enteredDescription.text,
-          // _enteredImageUrl,
-          double.parse(_enteredPrice.text),
-        );
+            '',
+            _enteredName.text,
+            _enteredDescription.text,
+            // _enteredImageUrl,
+            double.parse(_enteredPrice.text),
+            '');
         loadingDialog(context, "Enviando...");
         var newProductId = await BonAppetitApiService()
             .postCreateMenuSectionProduct(
                 widget.menuId, widget.sectionId, product);
         Navigator.of(context).pop(); // loadingDialog
         if (newProductId != null) {
+          if (pickedImage != null) {
+            var pngBytes = await pickedImage!.readAsBytes();
+            var success = await _uploadProductImage(newProductId, pngBytes);
+            if (!success) {
+              showErrorSnackbar(context, "Erro ao enviar imagem");
+            }
+          }
+
           var newProduct = DProduct(newProductId, _enteredName.text,
-              _enteredDescription.text, double.parse(_enteredPrice.text));
+              _enteredDescription.text, double.parse(_enteredPrice.text), null);
           Navigator.of(context).pop<DProduct>(newProduct);
           return;
         }

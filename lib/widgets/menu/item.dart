@@ -22,7 +22,7 @@ class Item extends ConsumerWidget {
           children: [
             FadeInImage(
               placeholder: MemoryImage(kTransparentImage),
-              image: NetworkImage(Uri.https("placehold.co", "/600x400/png", { "text": item.name}).toString()),
+              image: NetworkImage(item.imageUrl ?? Uri.https("placehold.co", "/600x400/png", { "text": item.name}).toString()),
               fit: BoxFit.cover,
               height: 150,
               width: double.infinity,

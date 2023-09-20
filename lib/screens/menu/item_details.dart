@@ -18,7 +18,7 @@ class ItemDetails extends ConsumerWidget {
       body: Column(
         children: [
           Image.network(
-            Uri.https("placehold.co", "/600x400/png", { "text": item.name}).toString(),
+            item.imageUrl ?? Uri.https("placehold.co", "/600x400/png", { "text": item.name}).toString(),
             height: 250,
             width: double.infinity,
             fit: BoxFit.cover,

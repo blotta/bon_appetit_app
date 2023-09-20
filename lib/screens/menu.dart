@@ -42,9 +42,6 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   @override
   void initState() {
     super.initState();
-    // ref.read(orderItemsProvider.notifier).clear();
-    // _menu = dataMenus.first;
-    // _activeSection = _menu!.sections.first;
     _getData();
   }
 
@@ -54,15 +51,16 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
     setState(() {
       _restaurant = r;
       _menu = _restaurant!.menu;
-      _activeSection = _menu!.sections.first;
+      _activeSection = (_menu == null || _menu!.sections.isEmpty) ? null : _menu?.sections.first;
     });
   }
 
   @override
   Widget build(BuildContext context) {
-    if (_menu == null) {
+    if (_restaurant == null) {
       return Scaffold(
         appBar: AppBar(
+          foregroundColor: Colors.white,
           title: Text(
             "Carregando",
             style: Theme.of(context)
@@ -71,19 +69,33 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
                 .copyWith(color: Theme.of(context).colorScheme.onPrimary),
           ),
         ),
-        body: Column(
-          children: const [
-            Center(
-              child: CircularProgressIndicator(),
-            ),
-          ],
+        body: const Center(
+          child: CircularProgressIndicator(),
+        ),
+      );
+    }
+
+    if (_menu == null || _activeSection == null) {
+      return Scaffold(
+        appBar: AppBar(
+          foregroundColor: Colors.white,
+          title: Text(
+            _menu?.name ?? _restaurant!.title,
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(color: Theme.of(context).colorScheme.onPrimary),
+          ),
+        ),
+        body: const Center(
+          child: Text('Este cardápio não contém itens para visualizar'),
         ),
       );
     }
 
     return Scaffold(
       appBar: AppBar(
-        // backgroundColor: Theme.of(context).colorScheme.,
+        foregroundColor: Colors.white,
         title: Text(
           _menu!.name,
           style: Theme.of(context)
