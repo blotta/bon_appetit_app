@@ -1,6 +1,7 @@
 import 'package:bon_appetit_app/screens/menu.dart';
 import 'package:bon_appetit_app/screens/profile.dart';
 import 'package:bon_appetit_app/screens/qr_scanner.dart';
+import 'package:bon_appetit_app/utils/info.dart';
 import 'package:flutter/material.dart';
 import 'package:bon_appetit_app/screens/initial.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
@@ -32,7 +33,13 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
     setState(() {
       _selectedPageIndex = 0;
     });
-    navigateToRestaurantMenu(code);
+    var url = Uri.tryParse(code);
+    if (url != null && url.pathSegments.isNotEmpty) {
+      navigateToRestaurantMenu(url.pathSegments.first);
+      return;
+    }
+
+    showErrorSnackbar(context, "QR code inválido");
   }
 
   @override

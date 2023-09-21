@@ -22,6 +22,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   DMenuSection? _activeSection;
 
   DiscoveryRestaurant? _restaurant;
+  bool loading = true;
 
   void _selectSection(DMenuSection section) {
     setState(() {
@@ -37,14 +38,20 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
   }
 
   void _getData() async {
-    var r = await BonAppetitApiService()
-        .getDiscoveryRestaurant(widget.restaurantId);
+    DiscoveryRestaurant? r;
+    try {
+      r = await BonAppetitApiService()
+          .getDiscoveryRestaurant(widget.restaurantId);
+    } catch (e) {
+      r = null;
+    }
     setState(() {
       _restaurant = r;
-      _menu = _restaurant!.menu;
+      _menu = _restaurant?.menu;
       _activeSection = (_menu == null || _menu!.sections.isEmpty)
           ? null
           : _menu?.sections.first;
+      loading = false;
     });
   }
 
@@ -86,7 +93,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
         ),
       );
     }
-    if (_restaurant == null) {
+    if (loading) {
       return Scaffold(
         appBar: AppBar(
           foregroundColor: Colors.white,
@@ -104,12 +111,35 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
       );
     }
 
+    if (_restaurant == null) {
+      return Scaffold(
+        appBar: AppBar(
+          foregroundColor: Colors.white,
+        ),
+        body: Column(
+          mainAxisAlignment: MainAxisAlignment.center,
+          crossAxisAlignment: CrossAxisAlignment.stretch,
+          children: [
+            const Icon(
+              Icons.sentiment_dissatisfied_outlined,
+              size: 40,
+            ),
+            Text(
+              'Restaurante inválido',
+              style: Theme.of(context).textTheme.titleLarge!,
+              textAlign: TextAlign.center,
+            ),
+          ],
+        ),
+      );
+    }
+
     if (_menu == null || _activeSection == null) {
       return Scaffold(
         appBar: AppBar(
           foregroundColor: Colors.white,
           title: Text(
-            _menu?.name ?? _restaurant!.title,
+            _restaurant!.title,
             style: Theme.of(context)
                 .textTheme
                 .titleLarge!
@@ -126,7 +156,7 @@ class _MenuScreenState extends ConsumerState<MenuScreen> {
       appBar: AppBar(
         foregroundColor: Colors.white,
         title: Text(
-          _menu!.name,
+          _restaurant!.title,
           style: Theme.of(context)
               .textTheme
               .titleLarge!

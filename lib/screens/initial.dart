@@ -33,7 +33,7 @@ class _InitialScreenState extends State<InitialScreen> {
           Image.asset('images/bonappetit_logo.png'),
           const SizedBox(height: 24),
           const Text(
-            'Leia o QR code para visualizar o cardápio ou escolha um restaurante disponível da lista abaixo',
+            'Leia o QR code para visualizar o cardápio ou escolha um restaurante da lista abaixo',
             // 'Leia o QR code para visualizar o cardápio',
             textAlign: TextAlign.center,
           ),
