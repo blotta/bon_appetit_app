@@ -4,6 +4,19 @@ List<DiscoveryRestaurant> discoveryRestaurantModelFromJson(String str) =>
     List<DiscoveryRestaurant>.from(
         json.decode(str).map((x) => DiscoveryRestaurant.fromJson(x)));
 
+String specialtyDescription(String key) {
+    var specialties = {
+      "Italiana": "Italiana",
+      "Brasileira": "Brasileira",
+      "Japonesa": "Japonesa",
+      "Chinesa": "Chinesa",
+      "Lanches": "Lanches",
+      "Saúdavel": "Saudável",
+      "Pizza": "Pizza"
+    };
+    return specialties[key] ?? '';
+}
+
 class DiscoveryRestaurant {
   const DiscoveryRestaurant(
       this.id, this.title, this.description, this.specialty, this.menu);

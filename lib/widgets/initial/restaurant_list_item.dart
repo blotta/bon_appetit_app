@@ -20,12 +20,18 @@ class RestaurantListItem extends ConsumerWidget {
         onTap: () => onSelectRestaurant(restaurant.id),
         child: Column(
           children: [
-            FadeInImage(
-              placeholder: MemoryImage(kTransparentImage),
-              image: NetworkImage(Uri.https("placehold.co", "/600x400/png",
-                  {"text": restaurant.title}).toString()),
+            // FadeInImage(
+            //   placeholder: MemoryImage(kTransparentImage),
+            //   image: NetworkImage(Uri.https("placehold.co", "/600x400/png",
+            //       {"text": restaurant.title}).toString()),
+            //   fit: BoxFit.cover,
+            //   height: 100,
+            //   width: double.infinity,
+            // ),
+            Image.asset(
+              'images/specialties/${restaurant.specialty}.png',
               fit: BoxFit.cover,
-              height: 100,
+              height: 120,
               width: double.infinity,
             ),
             Container(
@@ -36,10 +42,18 @@ class RestaurantListItem extends ConsumerWidget {
                   mainAxisAlignment: MainAxisAlignment.spaceBetween,
                   children: [
                     Text(restaurant.title,
-                        style: Theme.of(context).textTheme.titleMedium!.copyWith(fontWeight: FontWeight.bold)),
+                        style: Theme.of(context)
+                            .textTheme
+                            .titleMedium!
+                            .copyWith(fontWeight: FontWeight.bold)),
                   ],
                 ),
-                Text(restaurant.specialty),
+                Row(
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    Text(specialtyDescription(restaurant.specialty)),
+                  ],
+                ),
               ]),
             )
           ],

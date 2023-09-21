@@ -38,9 +38,15 @@ class _InitialScreenState extends State<InitialScreen> {
             textAlign: TextAlign.center,
           ),
           const SizedBox(height: 24),
-          Text(
-            'Restaurantes Disponíveis',
-            style: Theme.of(context).textTheme.headlineSmall,
+          Align(
+            alignment: Alignment.centerLeft,
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 16.0),
+              child: Text(
+                'Restaurantes Disponíveis',
+                style: Theme.of(context).textTheme.titleLarge,
+              ),
+            ),
           ),
           Expanded(
             child: FutureBuilder<List<DiscoveryRestaurant>>(
