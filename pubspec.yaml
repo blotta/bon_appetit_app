@@ -44,6 +44,7 @@ dependencies:
   intl: ^0.18.1
   credit_card_input_form: ^2.3.0
   qr_code_scanner: ^1.0.1
+  password_strength: ^0.2.0
 
 dev_dependencies:
   flutter_test:

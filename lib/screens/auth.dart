@@ -4,6 +4,7 @@ import 'package:bon_appetit_app/providers/auth_provider.dart';
 import 'package:bon_appetit_app/utils/info.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:password_strength/password_strength.dart';
 
 class LoginScreen extends ConsumerStatefulWidget {
   const LoginScreen({super.key});
@@ -19,6 +20,8 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
   final _nameController = TextEditingController();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
+
+  double passwordStrength = 0;
 
   bool _passVisible = false;
   bool _registerMode = false;
@@ -95,6 +98,19 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
       Timer(duration, navigateBack);
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     }
+
+
+  Color getPasswordStrengthColor() {
+
+    if (passwordStrength <= 1 / 4) {
+      return Colors.red;
+    } else if (passwordStrength <= 2 / 4) {
+      return Colors.yellow;
+    } else if (passwordStrength <= 3 / 4) {
+      return Colors.blue;
+    }
+    return Colors.green;
+  }
 
     // login mode
     Widget content = Form(
@@ -220,6 +236,11 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
             controller: _passwordController,
             obscureText: !_passVisible,
             keyboardType: TextInputType.visiblePassword,
+            onChanged: (value) {
+              setState(() {
+                passwordStrength = estimatePasswordStrength(value);
+              });
+            },
             decoration: InputDecoration(
               label: const Text('senha'),
               hintText: 'Digite sua senha',
@@ -260,6 +281,12 @@ class _LoginScreenState extends ConsumerState<LoginScreen> {
               }
               return null;
             },
+          ),
+          const SizedBox(height: 30),
+          LinearProgressIndicator(
+            value: passwordStrength,
+            backgroundColor: Colors.grey.shade300,
+            color: getPasswordStrengthColor()
           ),
           const SizedBox(height: 30),
           _loading
