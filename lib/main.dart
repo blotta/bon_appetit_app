@@ -26,6 +26,17 @@ class MyApp extends StatelessWidget {
       title: 'BonAppetit',
       theme: theme,
       home: const TabsScreen(),
+      onGenerateRoute: (settings) {
+        return MaterialPageRoute(builder: (context) {
+          return TabsScreen( restaurantId: settings.name?.replaceFirst('/', ''),);
+        });
+      },
+      onUnknownRoute: (settings) {
+        return MaterialPageRoute(builder: (context) {
+          return const TabsScreen();
+        });
+        
+      },
     );
   }
 }

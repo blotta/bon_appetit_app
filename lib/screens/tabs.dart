@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:bon_appetit_app/screens/menu.dart';
 import 'package:bon_appetit_app/screens/profile.dart';
 import 'package:bon_appetit_app/screens/qr_scanner.dart';
@@ -7,7 +9,9 @@ import 'package:bon_appetit_app/screens/initial.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class TabsScreen extends ConsumerStatefulWidget {
-  const TabsScreen({super.key});
+  const TabsScreen({super.key, this.restaurantId});
+
+  final String? restaurantId;
 
   @override
   ConsumerState<TabsScreen> createState() => _TabsScreenState();
@@ -29,25 +33,42 @@ class _TabsScreenState extends ConsumerState<TabsScreen> {
             builder: (ctx) => MenuScreen(restaurantId: restaurantId)));
   }
 
-  void onQRCodeScanningDone(String code) {
+  void handleLink(String link) {
     setState(() {
       _selectedPageIndex = 0;
     });
-    var url = Uri.tryParse(code);
+    var url = Uri.tryParse(link);
+
+    // restaurantId or /restaurantId
     if (url != null && url.pathSegments.isNotEmpty) {
       navigateToRestaurantMenu(url.pathSegments.first);
       return;
     }
 
-    showErrorSnackbar(context, "QR code inválido");
+    // /#/restaurantId (full link)
+    if (url != null && url.hasFragment) {
+      navigateToRestaurantMenu(url.fragment.replaceFirst('/', ''));
+      return;
+    }
+
+    showErrorSnackbar(context, "Link inválido");
+  }
+
+  @override
+  void initState() {
+    if (widget.restaurantId != null) {
+      Timer(const Duration(milliseconds: 100), () => handleLink(widget.restaurantId!));
+    }
+    super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
+  print(widget.restaurantId);
     Widget activePage = const InitialScreen();
 
     if (_selectedPageIndex == 1) {
-      activePage = QRScannerScreen(onScanningDone: onQRCodeScanningDone);
+      activePage = QRScannerScreen(onScanningDone: handleLink);
     }
 
     if (_selectedPageIndex == 2) {
