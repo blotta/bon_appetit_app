@@ -95,7 +95,9 @@ class DOrderItem {
 }
 
 class DComanda {
-  DComanda(this.items);
+  DComanda(this.number, this.items);
+
+  final int? number;
 
   final List<DOrderItem> items;
 }
@@ -105,11 +107,12 @@ List<DOrder> ordersModelFromJson(String str) =>
         json.decode(str).map((x) => DOrder.fromJson(x)));
 
 class DOrder {
-  DOrder(this.number, this.createdAt, this.canceled, this.total, this.itens);
+  DOrder(this.number, this.createdAt, this.canceled, this.paid, this.total, this.itens);
 
   final int number;
   final DateTime createdAt;
   final bool canceled;
+  final bool paid;
   final double total;
   final List<DOrderProduct> itens;
 
@@ -122,6 +125,7 @@ class DOrder {
       json['number'],
       DateTime.parse(json['createdAt']),
       json['canceled'],
+      json['paid'],
       json['total'],
       itens,
     );

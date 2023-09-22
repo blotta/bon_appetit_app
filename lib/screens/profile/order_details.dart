@@ -10,21 +10,23 @@ class OrderDetailsScreen extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     Widget getOrderStatus(DOrder order) {
+      if (order.paid) {
+        return Text('Finalizado',
+            style: Theme.of(context)
+                .textTheme
+                .titleLarge!
+                .copyWith(color: Colors.green));
+      }
       return Text('Em andamento',
           style: Theme.of(context)
               .textTheme
               .titleLarge!
               .copyWith(color: Colors.amber.shade800));
-      return Text('Finalizado',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(color: Colors.green));
-      return Text('Cancelado',
-          style: Theme.of(context)
-              .textTheme
-              .titleLarge!
-              .copyWith(color: Colors.red.shade600));
+      // return Text('Cancelado',
+      //     style: Theme.of(context)
+      //         .textTheme
+      //         .titleLarge!
+      //         .copyWith(color: Colors.red.shade600));
     }
 
     return Scaffold(

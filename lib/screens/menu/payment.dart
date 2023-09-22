@@ -1,4 +1,3 @@
-import 'package:bon_appetit_app/providers/comanda.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
@@ -8,7 +7,6 @@ class PaymentScreen extends ConsumerWidget {
   @override
   Widget build(BuildContext context, WidgetRef ref) {
     void returnToMenu() {
-      ref.read(comandaProvider.notifier).clear();
       Navigator.of(context).pop();
     }
 
@@ -30,12 +28,11 @@ class PaymentScreen extends ConsumerWidget {
             const SizedBox(height: 24),
             ElevatedButton(
               onPressed: returnToMenu,
-
               style: ElevatedButton.styleFrom(
-                backgroundColor: Colors.green,
-                foregroundColor: Colors.white,
-                textStyle: const TextStyle(fontSize: 20, fontWeight: FontWeight.bold)
-              ),
+                  backgroundColor: Colors.green,
+                  foregroundColor: Colors.white,
+                  textStyle: const TextStyle(
+                      fontSize: 20, fontWeight: FontWeight.bold)),
               child: const Text('CONTINUAR'),
             )
           ],

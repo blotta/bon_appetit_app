@@ -2,13 +2,13 @@ import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
 class ComandaNotifier extends StateNotifier<DComanda> {
-  ComandaNotifier() : super(DComanda([]));
+  ComandaNotifier() : super(DComanda(null, []));
 
   void clear() {
-    state = DComanda([]);
+    state = DComanda(null, []);
   }
 
-  void addItems(List<DOrderItem> items) {
+  void addItems(int? orderNumber, List<DOrderItem> items) {
     List<DOrderItem> currItems = [...state.items];
 
     for (final newItem in items) {
@@ -19,7 +19,7 @@ class ComandaNotifier extends StateNotifier<DComanda> {
       }
     }
 
-    var newComanda = DComanda(currItems);
+    var newComanda = DComanda(orderNumber, currItems);
     state = newComanda;
   }
 }

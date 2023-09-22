@@ -4,6 +4,7 @@ import 'dart:typed_data';
 import 'package:bon_appetit_app/config/apis.dart';
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
 import 'package:bon_appetit_app/models/partner_models.dart';
+import 'package:bon_appetit_app/models/payment.dart';
 import 'package:http/http.dart' as http;
 
 class BonAppetitLoginResponse {
@@ -125,6 +126,37 @@ class BonAppetitApiService {
     }
 
     return -1;
+  }
+
+  Future<bool> postMakePayment(int number, CreditCard card, {String? token}) async {
+    var url = Uri.parse("${Apis.baseUrl}/Payment/$number");
+    var headers = <String, String>{
+      'Content-Type': 'application/json',
+    };
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
+
+    var body = {
+      "cardNumber": card.number,
+      "cardName": card.name,
+      "dueDate": card.valid,
+      "cvv": card.cvv,
+    };
+
+    var content = json.encode(body);
+
+    var response = await http.post(url, headers: headers, body: content);
+
+    if (response.statusCode == 201) {
+      var ok = json.decode(response.body)['data']['paid'];
+      return ok;
+    }
+
+    return false;
   }
 
   Future<DOrder> getOrder(int orderNumber, {String? token}) async {

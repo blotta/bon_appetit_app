@@ -4,50 +4,51 @@ import 'package:bon_appetit_app/providers/comanda.dart';
 import 'package:bon_appetit_app/providers/menupreselect.dart';
 import 'package:bon_appetit_app/screens/menu/creditcard.dart';
 import 'package:bon_appetit_app/screens/menu/payment.dart';
+import 'package:bon_appetit_app/screens/menu/payment_process.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
+import 'package:bon_appetit_app/utils/info.dart';
 import 'package:bon_appetit_app/widgets/menu/order_list.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class Purchase extends ConsumerWidget {
+class Purchase extends ConsumerStatefulWidget {
   const Purchase({super.key, required this.restaurantId});
 
   final String restaurantId;
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    // final orderItems = ref.watch(orderItemsProvider);
+  ConsumerState<ConsumerStatefulWidget> createState() => _PurchaseState();
+}
+
+class _PurchaseState extends ConsumerState<Purchase> {
+
+  @override
+  Widget build(BuildContext context) {
     final menuPreselect = ref.watch(menuPreselectProvider);
     final comanda = ref.watch(comandaProvider);
 
     void resetOrder() {
-      // ref.read(orderItemsProvider.notifier).clear();
       ref.read(menuPreselectProvider.notifier).clear();
     }
 
     void makeOrder() async {
-      ScaffoldMessenger.of(context).clearSnackBars();
-      ScaffoldMessenger.of(context).showSnackBar(
-        const SnackBar(content: Text('Enviando pedido...')),
-      );
+      showInfoSnackbar(context, "Enviando pedido...");
 
       var orderNumber = await BonAppetitApiService().postMakeOrder(
-          restaurantId, menuPreselect,
+          widget.restaurantId, menuPreselect,
           token: ref.read(authProvider).token);
 
-      var msg = "Erro ao realizar pedido";
       if (orderNumber >= 0) {
-        ref.read(comandaProvider.notifier).addItems(menuPreselect);
-        // ref.read(orderItemsProvider.notifier).clear();
+        ref.read(comandaProvider.notifier).addItems(orderNumber, menuPreselect);
         ref.read(menuPreselectProvider.notifier).clear();
-        msg = "Pedido realizado!";
+        if (context.mounted) {
+          showInfoSnackbar(context, "Pedido realizado!");
+        }
+        return;
       }
 
       if (context.mounted) {
-        ScaffoldMessenger.of(context).clearSnackBars();
-        ScaffoldMessenger.of(context).showSnackBar(
-          SnackBar(content: Text(msg)),
-        );
+        showErrorSnackbar(context, "Erro ao realizar o pedido");
       }
     }
 
@@ -57,8 +58,21 @@ class Purchase extends ConsumerWidget {
 
       if (creditCard != null) {
         if (context.mounted) {
-          Navigator.of(context).pushReplacement(
-              MaterialPageRoute(builder: (ctx) => const PaymentScreen()));
+          var ok = await Navigator.of(context).push<bool>(MaterialPageRoute(
+              builder: (ctx) => PaymentProcessScreen(
+                  orderNumber: comanda.number!, creditCard: creditCard)));
+
+          if (ok ?? false) {
+            ref.read(comandaProvider.notifier).clear();
+            if (context.mounted) {
+              Navigator.of(context).pushReplacement(
+                  MaterialPageRoute(builder: (ctx) => const PaymentScreen()));
+              return;
+            }
+          }
+          if (context.mounted) {
+            showErrorSnackbar(context, "Erro no pagamento");
+          }
         }
       }
     }
@@ -103,7 +117,9 @@ class Purchase extends ConsumerWidget {
                   borderRadius: const BorderRadius.all(Radius.circular(5.0))),
               padding: const EdgeInsets.all(8.0),
               child: OrderList(
-                title: "Comanda",
+                title: comanda.number != null
+                    ? "Comanda #${comanda.number}"
+                    : "Comanda",
                 orderItems: comanda.items,
               ),
             ),
