@@ -92,12 +92,18 @@ class BonAppetitApiService {
     return userId;
   }
 
-  Future<int> postMakeOrder(
-      String restaurantId, List<DOrderItem> orderItems) async {
+  Future<int> postMakeOrder(String restaurantId, List<DOrderItem> orderItems,
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/order");
     var headers = <String, String>{
       'Content-Type': 'application/json',
     };
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
 
     var items = [];
     for (var orderItem in orderItems) {
@@ -121,10 +127,18 @@ class BonAppetitApiService {
     return -1;
   }
 
-  Future<DOrder> getOrder(int orderNumber) async {
+  Future<DOrder> getOrder(int orderNumber, {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/order/$orderNumber");
 
-    var response = await http.get(url);
+    var headers;
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
+
+    var response = await http.get(url, headers: headers);
 
     if (response.statusCode != 200) {
       throw Exception('Error loading orders');
@@ -135,10 +149,19 @@ class BonAppetitApiService {
     return order;
   }
 
-  Future<List<DOrder>> getRestaurantOrders(String restaurantId) async {
+  Future<List<DOrder>> getRestaurantOrders(String restaurantId,
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/Order/Partner/$restaurantId");
 
-    var response = await http.get(url);
+    var headers;
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
+
+    var response = await http.get(url, headers: headers);
 
     if (response.statusCode != 200) {
       throw Exception('Error loading orders');
@@ -150,9 +173,17 @@ class BonAppetitApiService {
     return orders;
   }
 
-  Future<List<BriefPartnerRestaurant>> getPartnerRestaurants() async {
+  Future<List<BriefPartnerRestaurant>> getPartnerRestaurants(
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/Partner");
-    var response = await http.get(url);
+    var headers = null;
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
+    var response = await http.get(url, headers: headers);
     if (response.statusCode == 200) {
       var jd = json.decode(response.body)["message"];
       var str = json.encode(jd);
@@ -164,9 +195,17 @@ class BonAppetitApiService {
     }
   }
 
-  Future<PartnerRestaurant> getPartnerRestaurant(String restaurantId) async {
+  Future<PartnerRestaurant> getPartnerRestaurant(String restaurantId,
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/Partner/$restaurantId");
-    var response = await http.get(url);
+    var headers = null;
+    if (token != null) {
+      headers = <String, String>{
+        // 'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
+    var response = await http.get(url, headers: headers);
     if (response.statusCode == 200) {
       var jd = json.decode(response.body)["message"];
       return PartnerRestaurant.fromJson(jd);
@@ -175,11 +214,18 @@ class BonAppetitApiService {
     }
   }
 
-  Future<String?> postCreatePartner(PartnerRestaurant restaurant) async {
+  Future<String?> postCreatePartner(PartnerRestaurant restaurant,
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/Partner");
     var headers = <String, String>{
       'Content-Type': 'application/json',
     };
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
 
     Map<String, dynamic> body = {
       "title": restaurant.title,
@@ -208,11 +254,18 @@ class BonAppetitApiService {
   }
 
   Future<bool> putUpdatePartner(
-      String restaurantId, PartnerRestaurant restaurant) async {
+      String restaurantId, PartnerRestaurant restaurant,
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/Partner/$restaurantId");
     var headers = <String, String>{
       'Content-Type': 'application/json',
     };
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
 
     Map<String, dynamic> body = {
       "title": restaurant.title,
@@ -239,10 +292,18 @@ class BonAppetitApiService {
     return false;
   }
 
-  Future<bool> patchPartnerActivate(String restaurantId) async {
+  Future<bool> patchPartnerActivate(String restaurantId,
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/Partner/Activate/$restaurantId");
+    var headers;
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
 
-    var response = await http.patch(url);
+    var response = await http.patch(url, headers: headers);
 
     if (response.statusCode < 400) {
       return true;
@@ -251,10 +312,19 @@ class BonAppetitApiService {
     return false;
   }
 
-  Future<bool> patchPartnerDeactivate(String restaurantId) async {
+  Future<bool> patchPartnerDeactivate(String restaurantId,
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/Partner/Deactivate/$restaurantId");
 
-    var response = await http.patch(url);
+    var headers;
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
+
+    var response = await http.patch(url, headers: headers);
 
     if (response.statusCode < 400) {
       return true;
@@ -279,11 +349,18 @@ class BonAppetitApiService {
     return null;
   }
 
-  Future<String?> postCreateMenu(String restaurantId, DMenu menu) async {
+  Future<String?> postCreateMenu(String restaurantId, DMenu menu,
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/Menu");
     var headers = <String, String>{
       'Content-Type': 'application/json',
     };
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
 
     Map<String, dynamic> body = {
       "name": menu.name,
@@ -303,12 +380,18 @@ class BonAppetitApiService {
     return null;
   }
 
-  Future<String?> postCreateMenuSection(
-      String menuId, DMenuSection section) async {
+  Future<String?> postCreateMenuSection(String menuId, DMenuSection section,
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/Menu/Section");
     var headers = <String, String>{
       'Content-Type': 'application/json',
     };
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
 
     Map<String, dynamic> body = {
       "menuId": menuId,
@@ -327,11 +410,18 @@ class BonAppetitApiService {
     return null;
   }
 
-  Future<String?> deleteMenuSection(String menuId, String sectionId) async {
+  Future<String?> deleteMenuSection(String menuId, String sectionId,
+      {String? token}) async {
     var url = Uri.parse("${Apis.baseUrl}/Menu/$menuId/Section/$sectionId");
     var headers = <String, String>{
       'Content-Type': 'application/json',
     };
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
 
     var response = await http.delete(url, headers: headers);
 
@@ -344,12 +434,19 @@ class BonAppetitApiService {
   }
 
   Future<String?> postCreateMenuSectionProduct(
-      String menuId, String sectionId, DProduct product) async {
+      String menuId, String sectionId, DProduct product,
+      {String? token}) async {
     var url =
         Uri.parse("${Apis.baseUrl}/Menu/$menuId/Section/$sectionId/Product");
     var headers = <String, String>{
       'Content-Type': 'application/json',
     };
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
 
     Map<String, dynamic> body = {
       "name": product.name,
@@ -369,24 +466,39 @@ class BonAppetitApiService {
     return null;
   }
 
-  Future<bool> uploadMenuSectionProductImage(String menuId, String sectionId,
-      String productId, Uint8List pngBytes) async {
+  Future<bool> uploadMenuSectionProductImage(
+      String menuId, String sectionId, String productId, Uint8List pngBytes,
+      {String? token}) async {
+    var headers;
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
     var patchUrl = Uri.parse(
         "${Apis.baseUrl}/Menu/$menuId/Section/$sectionId/Product/$productId");
 
-    var patchResponse = await http.patch(patchUrl);
+    var patchResponse = await http.patch(patchUrl, headers: headers);
 
     if (patchResponse.statusCode == 200) {
       var putUrl = Uri.parse(patchResponse.body);
 
-      var headers = {
+      var putHeaders = {
         'x-ms-blob-type': 'BlockBlob',
         'Content-Type': 'image/png'
       };
+      if (token != null) {
+        putHeaders = <String, String>{
+          'x-ms-blob-type': 'BlockBlob',
+          'Content-Type': 'application/json',
+          'Authorization': 'Bearer $token',
+        };
+      }
 
       var body = pngBytes;
 
-      var putResponse = await http.put(putUrl, headers: headers, body: body);
+      var putResponse = await http.put(putUrl, headers: putHeaders, body: body);
 
       if (putResponse.statusCode == 201) {
         return true;
@@ -397,12 +509,19 @@ class BonAppetitApiService {
   }
 
   Future<String?> deleteMenuSectionProduct(
-      String menuId, String sectionId, String productId) async {
+      String menuId, String sectionId, String productId,
+      {String? token}) async {
     var url = Uri.parse(
         "${Apis.baseUrl}/Menu/$menuId/Section/$sectionId/Product/$productId");
     var headers = <String, String>{
       'Content-Type': 'application/json',
     };
+    if (token != null) {
+      headers = <String, String>{
+        'Content-Type': 'application/json',
+        'Authorization': 'Bearer $token',
+      };
+    }
 
     var response = await http.delete(url, headers: headers);
 

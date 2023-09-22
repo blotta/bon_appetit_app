@@ -2,14 +2,16 @@ import 'dart:io';
 import 'dart:typed_data';
 
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
+import 'package:bon_appetit_app/providers/auth_provider.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:bon_appetit_app/utils/info.dart';
 import 'package:bon_appetit_app/utils/input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:transparent_image/transparent_image.dart';
 
-class ProductEditScreen extends StatefulWidget {
+class ProductEditScreen extends ConsumerStatefulWidget {
   const ProductEditScreen(
       {super.key, this.product, required this.menuId, required this.sectionId});
 
@@ -18,10 +20,10 @@ class ProductEditScreen extends StatefulWidget {
   final DProduct? product;
 
   @override
-  State<ProductEditScreen> createState() => _ProductEditScreenState();
+  ConsumerState<ProductEditScreen> createState() => _ProductEditScreenState();
 }
 
-class _ProductEditScreenState extends State<ProductEditScreen> {
+class _ProductEditScreenState extends ConsumerState<ProductEditScreen> {
   final _formKey = GlobalKey<FormState>();
   final _enteredName = TextEditingController();
   final _enteredImageUrl = TextEditingController();
@@ -48,7 +50,8 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
 
   Future<bool> _uploadProductImage(String productId, Uint8List pngBytes) async {
     var success = await BonAppetitApiService().uploadMenuSectionProductImage(
-        widget.menuId, widget.sectionId, productId, pngBytes);
+        widget.menuId, widget.sectionId, productId, pngBytes,
+        token: ref.read(authProvider).token);
     return success;
   }
 
@@ -83,7 +86,8 @@ class _ProductEditScreenState extends State<ProductEditScreen> {
         loadingDialog(context, "Enviando...");
         var newProductId = await BonAppetitApiService()
             .postCreateMenuSectionProduct(
-                widget.menuId, widget.sectionId, product);
+                widget.menuId, widget.sectionId, product,
+                token: ref.read(authProvider).token);
         if (context.mounted) {
           Navigator.of(context).pop(); // loadingDialog
         }

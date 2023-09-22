@@ -1,18 +1,20 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
+import 'package:bon_appetit_app/providers/auth_provider.dart';
 import 'package:bon_appetit_app/screens/profile/menu_edit.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MenuNewScreen extends StatefulWidget {
+class MenuNewScreen extends ConsumerStatefulWidget {
   const MenuNewScreen({super.key, required this.restaurantId});
 
   final String restaurantId;
 
   @override
-  State<MenuNewScreen> createState() => _MenuNewScreenState();
+  ConsumerState<MenuNewScreen> createState() => _MenuNewScreenState();
 }
 
-class _MenuNewScreenState extends State<MenuNewScreen> {
+class _MenuNewScreenState extends ConsumerState<MenuNewScreen> {
   final _formKey = GlobalKey<FormState>();
   final _enteredName = TextEditingController();
   final _enteredDescription = TextEditingController();
@@ -35,8 +37,9 @@ class _MenuNewScreenState extends State<MenuNewScreen> {
 
       var menu = DMenu('', _enteredName.text, []);
 
-      var menuId = await BonAppetitApiService()
-          .postCreateMenu(widget.restaurantId, menu);
+      var menuId = await BonAppetitApiService().postCreateMenu(
+          widget.restaurantId, menu,
+          token: ref.read(authProvider).token);
 
       if (menuId != null) {
         var newMenu = await BonAppetitApiService()

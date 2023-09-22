@@ -1,16 +1,18 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
+import 'package:bon_appetit_app/providers/auth_provider.dart';
 import 'package:bon_appetit_app/screens/profile/order_details.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:intl/intl.dart';
 
-class OrdersScreen extends StatelessWidget {
+class OrdersScreen extends ConsumerWidget {
   const OrdersScreen({super.key, required this.restaurantId});
 
   final String restaurantId;
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     navigateToOrderDetailsScreen(DOrder order) {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (ctx) => OrderDetailsScreen(order: order)));
@@ -48,11 +50,12 @@ class OrdersScreen extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
         child: FutureBuilder<List<DOrder>>(
-          future: BonAppetitApiService().getRestaurantOrders(restaurantId),
+          future: BonAppetitApiService().getRestaurantOrders(restaurantId,
+              token: ref.read(authProvider).token),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const Center(
-                child: Text("Erro ao carregar restaurantes"),
+                child: Text("Erro ao carregar"),
               );
             }
 

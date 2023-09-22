@@ -1,18 +1,21 @@
 import 'package:bon_appetit_app/models/partner_models.dart';
+import 'package:bon_appetit_app/providers/auth_provider.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_details.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RestaurantEditScreen extends StatefulWidget {
+class RestaurantEditScreen extends ConsumerStatefulWidget {
   const RestaurantEditScreen({super.key, this.restaurant});
 
   final PartnerRestaurant? restaurant;
 
   @override
-  State<RestaurantEditScreen> createState() => _RestaurantEditScreenState();
+  ConsumerState<RestaurantEditScreen> createState() =>
+      _RestaurantEditScreenState();
 }
 
-class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
+class _RestaurantEditScreenState extends ConsumerState<RestaurantEditScreen> {
   final _formKey = GlobalKey<FormState>();
   String? restaurantId;
   var _enteredName = '';
@@ -69,8 +72,9 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
 
       if (restaurantId != null) {
         // edit
-        var result = await BonAppetitApiService()
-            .putUpdatePartner(restaurantId!, partner);
+        var result = await BonAppetitApiService().putUpdatePartner(
+            restaurantId!, partner,
+            token: ref.read(authProvider).token);
         if (result) {
           if (context.mounted) {
             Navigator.of(context).pop(true);
@@ -78,7 +82,8 @@ class _RestaurantEditScreenState extends State<RestaurantEditScreen> {
         }
       } else {
         // new
-        var partnerId = await BonAppetitApiService().postCreatePartner(partner);
+        var partnerId = await BonAppetitApiService()
+            .postCreatePartner(partner, token: ref.read(authProvider).token);
         if (partnerId != null) {
           if (context.mounted) {
             Navigator.of(context).pushReplacement(MaterialPageRoute(

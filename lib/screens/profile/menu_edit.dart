@@ -1,20 +1,22 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
+import 'package:bon_appetit_app/providers/auth_provider.dart';
 import 'package:bon_appetit_app/screens/profile/section_edit.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:bon_appetit_app/utils/info.dart';
 import 'package:bon_appetit_app/utils/input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class MenuEditScreen extends StatefulWidget {
+class MenuEditScreen extends ConsumerStatefulWidget {
   const MenuEditScreen({super.key, required this.menu});
 
   final DMenu menu;
 
   @override
-  State<MenuEditScreen> createState() => _MenuEditScreenState();
+  ConsumerState<MenuEditScreen> createState() => _MenuEditScreenState();
 }
 
-class _MenuEditScreenState extends State<MenuEditScreen> {
+class _MenuEditScreenState extends ConsumerState<MenuEditScreen> {
   final _formKey = GlobalKey<FormState>();
   var _enteredName = '';
   List<DMenuSection> _menuSections = [];
@@ -43,8 +45,9 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
 
   Future _createSection(String secName) async {
     var newSec = DMenuSection('', secName, []);
-    var newSecId = await BonAppetitApiService()
-        .postCreateMenuSection(widget.menu.id, newSec);
+    var newSecId = await BonAppetitApiService().postCreateMenuSection(
+        widget.menu.id, newSec,
+        token: ref.read(authProvider).token);
     if (newSecId != null) {
       setState(() {
         _menuSections.add(DMenuSection(newSecId, secName, []));
@@ -53,8 +56,9 @@ class _MenuEditScreenState extends State<MenuEditScreen> {
   }
 
   Future<bool> _deleteSection(String menuSectionId) async {
-    var secId = await BonAppetitApiService()
-        .deleteMenuSection(widget.menu.id, menuSectionId);
+    var secId = await BonAppetitApiService().deleteMenuSection(
+        widget.menu.id, menuSectionId,
+        token: ref.read(authProvider).token);
     if (secId != null) {
       setState(() {
         // _menuSections.remove(section);

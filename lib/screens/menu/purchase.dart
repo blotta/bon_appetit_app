@@ -1,4 +1,5 @@
 import 'package:bon_appetit_app/models/payment.dart';
+import 'package:bon_appetit_app/providers/auth_provider.dart';
 import 'package:bon_appetit_app/providers/comanda.dart';
 import 'package:bon_appetit_app/providers/menupreselect.dart';
 import 'package:bon_appetit_app/screens/menu/creditcard.dart';
@@ -30,8 +31,9 @@ class Purchase extends ConsumerWidget {
         const SnackBar(content: Text('Enviando pedido...')),
       );
 
-      var orderNumber = await BonAppetitApiService()
-          .postMakeOrder(restaurantId, menuPreselect);
+      var orderNumber = await BonAppetitApiService().postMakeOrder(
+          restaurantId, menuPreselect,
+          token: ref.read(authProvider).token);
 
       var msg = "Erro ao realizar pedido";
       if (orderNumber >= 0) {

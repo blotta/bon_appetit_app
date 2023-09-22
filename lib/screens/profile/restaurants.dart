@@ -1,14 +1,16 @@
 import 'package:bon_appetit_app/models/partner_models.dart';
+import 'package:bon_appetit_app/providers/auth_provider.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_details.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_edit.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RestaurantsScreen extends StatelessWidget {
+class RestaurantsScreen extends ConsumerWidget {
   const RestaurantsScreen({super.key});
 
   @override
-  Widget build(BuildContext context) {
+  Widget build(BuildContext context, WidgetRef ref) {
     void navigateToRestaurantDetails(String restaurantId) {
       Navigator.of(context).push(MaterialPageRoute(
           builder: (ctx) => RestaurantDetailsScreen(restaurantId: restaurantId)));
@@ -34,7 +36,7 @@ class RestaurantsScreen extends StatelessWidget {
       body: Container(
         padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 30),
         child: FutureBuilder<List<BriefPartnerRestaurant>>(
-          future: BonAppetitApiService().getPartnerRestaurants(),
+          future: BonAppetitApiService().getPartnerRestaurants(token: ref.read(authProvider).token),
           builder: (context, snapshot) {
             if (snapshot.hasError) {
               return const Center(

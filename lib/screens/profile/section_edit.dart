@@ -1,11 +1,13 @@
 import 'package:bon_appetit_app/models/discovery_restaurant.dart';
+import 'package:bon_appetit_app/providers/auth_provider.dart';
 import 'package:bon_appetit_app/screens/profile/product_edit.dart';
 import 'package:bon_appetit_app/screens/profile/items.dart';
 import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:bon_appetit_app/utils/info.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class SectionEditScreen extends StatefulWidget {
+class SectionEditScreen extends ConsumerStatefulWidget {
   const SectionEditScreen(
       {super.key, required this.section, required this.menuId});
 
@@ -13,10 +15,10 @@ class SectionEditScreen extends StatefulWidget {
   final DMenuSection section;
 
   @override
-  State<SectionEditScreen> createState() => _SectionEditScreenState();
+  ConsumerState<SectionEditScreen> createState() => _SectionEditScreenState();
 }
 
-class _SectionEditScreenState extends State<SectionEditScreen> {
+class _SectionEditScreenState extends ConsumerState<SectionEditScreen> {
   final _formKey = GlobalKey<FormState>();
   var _enteredName = '';
   List<DProduct> _sectionProducts = [];
@@ -67,8 +69,9 @@ class _SectionEditScreenState extends State<SectionEditScreen> {
   }
 
   Future<bool> deleteProduct(DProduct product) async {
-    var prodId = await BonAppetitApiService()
-        .deleteMenuSectionProduct(widget.menuId, widget.section.id, product.id);
+    var prodId = await BonAppetitApiService().deleteMenuSectionProduct(
+        widget.menuId, widget.section.id, product.id,
+        token: ref.read(authProvider).token);
     if (prodId != null) {
       _sectionProducts.remove(product);
       return true;

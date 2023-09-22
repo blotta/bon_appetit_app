@@ -1,4 +1,5 @@
 import 'package:bon_appetit_app/models/partner_models.dart';
+import 'package:bon_appetit_app/providers/auth_provider.dart';
 import 'package:bon_appetit_app/screens/profile/menus.dart';
 import 'package:bon_appetit_app/screens/profile/orders.dart';
 import 'package:bon_appetit_app/screens/profile/restaurant_edit.dart';
@@ -6,18 +7,20 @@ import 'package:bon_appetit_app/services/bonappetit_api.dart';
 import 'package:bon_appetit_app/utils/info.dart';
 import 'package:bon_appetit_app/utils/input.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 
-class RestaurantDetailsScreen extends StatefulWidget {
+class RestaurantDetailsScreen extends ConsumerStatefulWidget {
   const RestaurantDetailsScreen({super.key, required this.restaurantId});
 
   final String restaurantId;
 
   @override
-  State<RestaurantDetailsScreen> createState() =>
+  ConsumerState<RestaurantDetailsScreen> createState() =>
       _RestaurantDetailsScreenState();
 }
 
-class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
+class _RestaurantDetailsScreenState
+    extends ConsumerState<RestaurantDetailsScreen> {
   PartnerRestaurant? _restaurant;
   bool restaurantEnable = false;
 
@@ -28,8 +31,9 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
   }
 
   void getData() async {
-    var r =
-        await BonAppetitApiService().getPartnerRestaurant(widget.restaurantId);
+    var r = await BonAppetitApiService().getPartnerRestaurant(
+        widget.restaurantId,
+        token: ref.read(authProvider).token);
     setState(() {
       _restaurant = r;
       restaurantEnable = r.enable;
@@ -42,8 +46,9 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
       var changed = await Navigator.of(context).push<bool>(MaterialPageRoute(
           builder: (ctx) => RestaurantEditScreen(restaurant: r)));
       if (changed != null && changed == true) {
-        var r = await BonAppetitApiService()
-            .getPartnerRestaurant(widget.restaurantId);
+        var r = await BonAppetitApiService().getPartnerRestaurant(
+            widget.restaurantId,
+            token: ref.read(authProvider).token);
         setState(() {
           _restaurant = r;
         });
@@ -68,12 +73,14 @@ class _RestaurantDetailsScreenState extends State<RestaurantDetailsScreen> {
 
       if (activating) {
         loadingDialog(context, "Ativando");
-        success = await BonAppetitApiService()
-            .patchPartnerActivate(widget.restaurantId);
+        success = await BonAppetitApiService().patchPartnerActivate(
+            widget.restaurantId,
+            token: ref.read(authProvider).token);
       } else {
         loadingDialog(context, "Desativando");
-        success = await BonAppetitApiService()
-            .patchPartnerDeactivate(widget.restaurantId);
+        success = await BonAppetitApiService().patchPartnerDeactivate(
+            widget.restaurantId,
+            token: ref.read(authProvider).token);
       }
       if (context.mounted) {
         Navigator.of(context).pop(); // loadingDialog
