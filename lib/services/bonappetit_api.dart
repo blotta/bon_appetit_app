@@ -520,13 +520,6 @@ class BonAppetitApiService {
         'x-ms-blob-type': 'BlockBlob',
         'Content-Type': 'image/png'
       };
-      if (token != null) {
-        putHeaders = <String, String>{
-          'x-ms-blob-type': 'BlockBlob',
-          'Content-Type': 'application/json',
-          'Authorization': 'Bearer $token',
-        };
-      }
 
       var body = pngBytes;
 
